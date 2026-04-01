@@ -1,0 +1,1745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>B&Co Content Matrix AI · v7</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --coral:#D85A30;--coral-l:#FAECE7;--coral-d:#993C1D;
+  --purple:#534AB7;--purple-l:#EEEDFE;--purple-d:#3C3489;
+  --teal:#0F6E56;--teal-l:#E1F5EE;--teal-d:#085041;
+  --amber:#BA7517;--amber-l:#FAEEDA;--amber-d:#633806;
+  --blue:#185FA5;--blue-l:#E6F1FB;--blue-d:#0C447C;
+  --ink:#1A1916;--ink-2:#3D3C39;--ink-3:#7A7870;
+  --paper:#FAF9F6;--paper-2:#F2F0EB;--paper-3:#E8E5DE;
+  --border:#D8D4CB;
+  --serif:'DM Serif Display',Georgia,serif;
+  --sans:'Instrument Sans',system-ui,sans-serif;
+  --mono:'DM Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--sans);background:var(--paper);color:var(--ink);min-height:100vh;line-height:1.6;}
+
+/* NAV */
+.nav{border-bottom:1px solid var(--border);padding:0 32px;display:flex;align-items:center;justify-content:space-between;background:var(--paper);position:sticky;top:0;z-index:100;}
+.logo{display:flex;align-items:baseline;gap:10px;padding:18px 0;}
+.logo-mark{font-family:var(--serif);font-size:20px;color:var(--coral);letter-spacing:-0.5px;}
+.logo-sub{font-size:11px;font-weight:500;color:var(--ink-3);letter-spacing:.08em;text-transform:uppercase;}
+.logo-v{font-size:10px;color:var(--ink-3);background:var(--paper-3);padding:2px 7px;border-radius:20px;font-weight:600;letter-spacing:.04em;align-self:center;}
+.nav-tabs{display:flex;gap:0;}
+.nav-tab{font-size:12px;font-weight:500;color:var(--ink-3);padding:20px 18px;cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;letter-spacing:.02em;white-space:nowrap;}
+.nav-tab:hover{color:var(--ink);}
+.nav-tab.active{color:var(--coral);border-bottom-color:var(--coral);}
+.nav-kpi{font-size:11px;color:var(--ink-3);font-style:italic;max-width:280px;text-align:right;line-height:1.4;}
+
+/* PAGES */
+.page{display:none;}
+.page.active{display:block;}
+
+/* ── MATRIX PAGE ── */
+.matrix-layout{display:grid;grid-template-columns:1fr 420px;min-height:calc(100vh - 57px);}
+.input-panel{padding:36px 40px;border-right:1px solid var(--border);overflow-y:auto;}
+.eyebrow{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);margin-bottom:8px;}
+.input-heading{font-family:var(--serif);font-size:28px;color:var(--ink);margin-bottom:6px;line-height:1.2;}
+.input-sub{font-size:13px;color:var(--ink-3);margin-bottom:20px;line-height:1.5;}
+
+/* Mode tabs */
+.mode-tabs{display:flex;gap:0;border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:24px;width:fit-content;}
+.mode-tab{font-size:12px;font-weight:600;padding:9px 20px;cursor:pointer;background:white;color:var(--ink-3);border-right:1px solid var(--border);transition:all .15s;letter-spacing:.02em;}
+.mode-tab:last-child{border-right:none;}
+.mode-tab.active{background:var(--ink);color:white;}
+.mode-tab:hover:not(.active){background:var(--paper-2);color:var(--ink);}
+
+/* Score mode */
+#scoreMode{}
+.idea-box{width:100%;min-height:110px;padding:16px;font-family:var(--sans);font-size:14px;color:var(--ink);background:white;border:1px solid var(--border);border-radius:8px;resize:vertical;outline:none;line-height:1.6;transition:border-color .2s;}
+.idea-box:focus{border-color:var(--coral);}
+.idea-box::placeholder{color:var(--ink-3);}
+.threads-label{font-size:11px;font-weight:600;color:var(--ink-3);letter-spacing:.06em;text-transform:uppercase;margin:18px 0 8px;}
+.thread-scroll{max-height:210px;overflow-y:auto;border:1px solid var(--border);border-radius:8px;background:white;padding:10px 12px;margin-bottom:18px;}
+.thread-lane-label{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid var(--paper-3);}
+.thread-chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px;}
+.thread-chip{font-size:11px;padding:4px 12px;border-radius:20px;border:1px solid var(--border);color:var(--ink-3);background:white;cursor:pointer;transition:all .15s;user-select:none;}
+.thread-chip:hover{border-color:var(--coral);color:var(--coral);}
+.thread-chip.selected{background:var(--coral);border-color:var(--coral);color:white;}
+.analyze-btn{width:100%;padding:14px;background:var(--coral);color:white;font-family:var(--sans);font-size:14px;font-weight:600;border:none;border-radius:8px;cursor:pointer;letter-spacing:.02em;transition:background .15s,transform .1s;margin-top:4px;}
+.analyze-btn:hover{background:var(--coral-d);}
+.analyze-btn:active{transform:scale(0.99);}
+.analyze-btn:disabled{background:var(--paper-3);color:var(--ink-3);cursor:not-allowed;}
+.loading-bar{height:2px;background:var(--paper-3);border-radius:2px;margin-top:12px;overflow:hidden;display:none;}
+.loading-bar.active{display:block;}
+.loading-fill{height:100%;background:var(--coral);border-radius:2px;animation:loadpulse 1.4s ease-in-out infinite;}
+@keyframes loadpulse{0%{width:0%;margin-left:0}50%{width:70%;margin-left:15%}100%{width:0%;margin-left:100%}}
+
+/* Generate mode */
+#generateMode{display:none;}
+.gen-section{margin-bottom:20px;}
+.gen-label{font-size:11px;font-weight:600;color:var(--ink-3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px;}
+.gen-room-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;max-height:240px;overflow-y:auto;border:1px solid var(--border);border-radius:8px;background:white;padding:10px;}
+.gen-room-chip{font-size:11px;padding:5px 10px;border-radius:6px;border:1px solid var(--border);color:var(--ink-3);background:white;cursor:pointer;transition:all .15s;user-select:none;line-height:1.3;}
+.gen-room-chip:hover{border-color:var(--coral);color:var(--coral);}
+.gen-room-chip.selected{background:var(--coral-l);border-color:var(--coral);color:var(--coral-d);font-weight:500;}
+.gen-gap-btn{font-size:12px;padding:8px 14px;border-radius:6px;border:1px solid var(--border);color:var(--ink-3);background:white;cursor:pointer;transition:all .15s;font-weight:500;}
+.gen-gap-btn:hover,.gen-gap-btn.active{background:var(--amber-l);border-color:var(--amber);color:var(--amber-d);}
+.gen-row{display:flex;gap:10px;align-items:center;margin-bottom:10px;flex-wrap:wrap;}
+.gen-select{padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-family:var(--sans);font-size:12px;color:var(--ink);background:white;outline:none;cursor:pointer;}
+.gen-select:focus{border-color:var(--coral);}
+.gen-note{font-size:11px;color:var(--ink-3);font-style:italic;line-height:1.5;margin-top:-6px;margin-bottom:12px;}
+
+/* Lens legend */
+.lens-legend{margin-top:28px;padding-top:20px;border-top:1px solid var(--border);}
+.legend-title{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);margin-bottom:3px;}
+.legend-arch{font-size:11px;color:var(--ink-3);font-style:italic;margin-bottom:12px;line-height:1.4;}
+.lens-pills{display:flex;flex-direction:column;gap:7px;}
+.lens-pill-row{display:flex;align-items:center;gap:10px;}
+.lens-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0;}
+.lens-pill-name{font-size:12px;font-weight:500;color:var(--ink-2);min-width:175px;}
+.lens-pill-desc{font-size:11px;color:var(--ink-3);font-style:italic;}
+.root-badge{font-size:9px;font-weight:700;padding:1px 5px;border-radius:8px;background:var(--coral-l);color:var(--coral-d);letter-spacing:.04em;margin-left:4px;}
+
+/* RESULTS PANEL */
+.results-panel{padding:36px 28px;overflow-y:auto;background:var(--paper-2);}
+.results-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:300px;text-align:center;color:var(--ink-3);gap:10px;padding:40px 20px;}
+.empty-mark{font-family:var(--serif);font-size:48px;color:var(--paper-3);line-height:1;}
+.empty-text{font-size:13px;line-height:1.6;max-width:240px;}
+.result-card{background:white;border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:14px;}
+.result-card-header{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.rct{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);}
+.result-card-body{padding:14px 16px;}
+.score-grid{display:flex;flex-direction:column;gap:12px;}
+.score-row{display:flex;flex-direction:column;gap:3px;}
+.score-meta{display:flex;justify-content:space-between;align-items:center;}
+.score-label{font-size:12px;font-weight:500;color:var(--ink-2);}
+.score-pct{font-family:var(--mono);font-size:12px;color:var(--ink-3);}
+.score-track{height:6px;background:var(--paper-3);border-radius:3px;overflow:hidden;}
+.score-fill{height:100%;border-radius:3px;transition:width 1s ease;}
+.score-rationale{font-size:11px;color:var(--ink-3);font-style:italic;margin-top:2px;line-height:1.4;}
+.fl-track{display:flex;gap:3px;margin-bottom:8px;}
+.fl-pip{height:8px;flex:1;border-radius:2px;background:var(--paper-3);transition:background .4s;}
+.fl-pip.a1{background:#888780;}.fl-pip.a2{background:var(--amber);}.fl-pip.a3{background:var(--teal);}.fl-pip.a4{background:var(--purple);}
+.fl-label{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:4px;}
+.fl-rationale{font-size:12px;color:var(--ink-3);font-style:italic;line-height:1.5;}
+.overall-score{display:flex;align-items:center;gap:16px;padding:14px 16px;background:var(--ink);color:white;border-radius:8px;margin-bottom:14px;}
+.score-big{font-family:var(--serif);font-size:42px;line-height:1;color:white;}
+.score-big-label{font-size:11px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px;}
+.score-verdict{font-size:13px;color:rgba(255,255,255,0.85);line-height:1.4;}
+.tag-row{display:flex;flex-wrap:wrap;gap:6px;}
+.tag{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:500;}
+.wf-list{display:flex;flex-direction:column;gap:10px;}
+.wf-item{display:flex;gap:10px;align-items:flex-start;}
+.wf-num{width:20px;height:20px;border-radius:50%;background:var(--paper-2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:var(--ink-3);flex-shrink:0;margin-top:1px;}
+.wf-text{font-size:12px;color:var(--ink-2);line-height:1.5;}
+.format-grid{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;}
+.format-primary{font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;background:var(--ink);color:white;}
+.format-secondary{font-size:11px;padding:3px 10px;border-radius:20px;background:var(--paper-2);color:var(--ink-2);border:1px solid var(--border);}
+.monday-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.monday-field{background:var(--paper-2);border-radius:6px;padding:8px 10px;}
+.monday-key{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-3);margin-bottom:2px;}
+.monday-val{font-size:12px;color:var(--ink);font-weight:500;}
+.monday-desc{background:var(--paper-2);border-radius:6px;padding:8px 10px;margin-top:6px;grid-column:1/-1;}
+.monday-desc pre{font-size:11px;color:var(--ink-2);white-space:pre-wrap;line-height:1.5;font-family:var(--mono);}
+.copy-btn{font-size:10px;font-weight:600;padding:4px 10px;background:var(--ink);color:white;border:none;border-radius:6px;cursor:pointer;letter-spacing:.04em;transition:background .15s;}
+.copy-btn:hover{background:var(--ink-2);}
+
+/* Approve to calendar button */
+.approve-btn{font-size:11px;font-weight:600;padding:6px 14px;background:var(--teal);color:white;border:none;border-radius:6px;cursor:pointer;letter-spacing:.03em;transition:background .15s;}
+.approve-btn:hover{background:var(--teal-d);}
+.approve-btn:disabled{background:var(--paper-3);color:var(--ink-3);cursor:not-allowed;}
+
+/* Generated ideas panel */
+.gen-results{display:flex;flex-direction:column;gap:12px;}
+.gen-idea-card{background:white;border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+.gen-idea-head{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:12px;cursor:pointer;}
+.gen-idea-head:hover{background:var(--paper);}
+.gen-idea-num{font-family:var(--mono);font-size:11px;color:var(--ink-3);min-width:22px;padding-top:2px;}
+.gen-idea-title{font-size:13px;font-weight:500;color:var(--ink);flex:1;line-height:1.4;}
+.gen-idea-meta{display:flex;gap:8px;align-items:center;flex-shrink:0;}
+.gen-idea-body{padding:14px 16px;border-top:1px solid var(--border);display:none;}
+.gen-idea-body.open{display:block;}
+.gen-actions{display:flex;gap:8px;margin-top:12px;}
+.gen-score-btn{font-size:11px;font-weight:600;padding:6px 14px;background:var(--coral);color:white;border:none;border-radius:6px;cursor:pointer;transition:background .15s;}
+.gen-score-btn:hover{background:var(--coral-d);}
+
+/* ── SESSION PAGE ── */
+.session-layout{padding:32px 40px;max-width:1100px;margin:0 auto;}
+.session-header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:24px;}
+.session-heading{font-family:var(--serif);font-size:26px;color:var(--ink);margin-bottom:4px;}
+.session-sub{font-size:13px;color:var(--ink-3);line-height:1.5;}
+.session-stats{display:flex;gap:20px;align-items:center;}
+.session-stat{text-align:right;}
+.session-stat-val{font-family:var(--mono);font-size:20px;font-weight:500;color:var(--ink);}
+.session-stat-label{font-size:10px;color:var(--ink-3);text-transform:uppercase;letter-spacing:.07em;}
+.session-empty{text-align:center;padding:80px 20px;color:var(--ink-3);}
+.session-entry{background:white;border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:16px;}
+.session-entry-head{padding:12px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px;cursor:pointer;transition:background .15s;}
+.session-entry-head:hover{background:var(--paper);}
+.session-entry-num{font-family:var(--mono);font-size:11px;color:var(--ink-3);min-width:24px;}
+.session-entry-title{font-size:13px;font-weight:500;color:var(--ink);flex:1;line-height:1.4;}
+.session-entry-meta{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.session-entry-body{padding:16px 18px;border-top:1px solid var(--border);display:none;}
+.session-entry-body.open{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.session-field{font-size:12px;color:var(--ink-2);line-height:1.5;}
+.session-field-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-3);margin-bottom:3px;}
+.session-verdict{font-size:12px;color:var(--ink-2);line-height:1.6;padding:10px 12px;background:var(--paper-2);border-radius:6px;border-left:2px solid var(--coral);}
+.session-clear-btn{font-size:11px;font-weight:600;padding:6px 14px;border-radius:6px;background:var(--paper-2);color:var(--ink-3);border:1px solid var(--border);cursor:pointer;transition:all .15s;}
+.session-clear-btn:hover{border-color:var(--coral);color:var(--coral);}
+
+/* ── CALENDAR PAGE ── */
+.cal-layout{padding:36px 40px;max-width:1400px;margin:0 auto;}
+.cal-header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:28px;}
+.cal-heading{font-family:var(--serif);font-size:28px;color:var(--ink);line-height:1.2;margin-bottom:4px;}
+.cal-sub{font-size:13px;color:var(--ink-3);line-height:1.5;}
+.cal-actions{display:flex;gap:10px;align-items:center;}
+.cal-btn{font-size:12px;font-weight:600;padding:9px 16px;background:var(--ink);color:white;border:none;border-radius:8px;cursor:pointer;transition:background .15s;}
+.cal-btn:hover{background:var(--ink-2);}
+.cal-btn.secondary{background:white;color:var(--ink);border:1px solid var(--border);}
+.cal-btn.secondary:hover{background:var(--paper-2);}
+
+.horizon-tabs{display:flex;gap:0;border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:24px;width:fit-content;}
+.horizon-tab{font-size:12px;font-weight:500;padding:8px 18px;cursor:pointer;background:white;color:var(--ink-3);border-right:1px solid var(--border);transition:all .15s;}
+.horizon-tab:last-child{border-right:none;}
+.horizon-tab.active{background:var(--ink);color:white;}
+.horizon-tab:hover:not(.active){background:var(--paper-2);color:var(--ink);}
+
+/* Nutrition label */
+.nutrition-section{margin-bottom:28px;}
+.nutrition-label-card{background:white;border:2px solid var(--ink);border-radius:10px;overflow:hidden;max-width:480px;}
+.nutrition-label-head{padding:10px 16px;border-bottom:3px solid var(--ink);}
+.nutrition-label-title{font-family:var(--serif);font-size:22px;color:var(--ink);line-height:1.1;}
+.nutrition-label-sub{font-size:11px;color:var(--ink-3);margin-top:2px;}
+.nutrition-label-servings{padding:6px 16px;border-bottom:8px solid var(--ink);font-size:11px;color:var(--ink-2);}
+.nutrition-main{padding:0 16px;}
+.nutrition-row{display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);font-size:12px;}
+.nutrition-row:last-child{border-bottom:none;}
+.nutrition-row.thick{border-bottom:4px solid var(--ink);padding-bottom:6px;}
+.nutrition-row.indent{padding-left:16px;}
+.nutrition-label-name{color:var(--ink-2);}
+.nutrition-label-name.bold{font-weight:600;color:var(--ink);}
+.nutrition-val{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:600;}
+.nutrition-bar{flex:1;height:6px;background:var(--paper-3);border-radius:3px;overflow:hidden;margin:0 10px;}
+.nutrition-bar-fill{height:100%;border-radius:3px;}
+.nutrition-dv{font-size:10px;color:var(--ink-3);min-width:32px;text-align:right;}
+.nutrition-footnote{padding:8px 16px;font-size:10px;color:var(--ink-3);line-height:1.5;border-top:1px solid var(--border);}
+
+/* Aggregate cards */
+.agg-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+.agg-card{background:white;border:1px solid var(--border);border-radius:10px;padding:16px;}
+.agg-card-val{font-family:var(--serif);font-size:32px;color:var(--ink);line-height:1;}
+.agg-card-label{font-size:11px;color:var(--ink-3);margin-top:4px;line-height:1.4;}
+.agg-card-sub{font-size:10px;color:var(--ink-3);font-style:italic;margin-top:3px;}
+
+/* Room health */
+.room-health-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:28px;}
+.room-health-item{background:white;border:1px solid var(--border);border-radius:8px;padding:11px 14px;display:flex;align-items:center;gap:10px;}
+.room-health-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.room-health-name{font-size:12px;color:var(--ink-2);flex:1;line-height:1.3;}
+.room-health-count{font-family:var(--mono);font-size:11px;color:var(--ink-3);}
+.room-health-bar{width:60px;height:5px;background:var(--paper-3);border-radius:3px;overflow:hidden;}
+.room-health-fill{height:100%;border-radius:3px;background:var(--coral);}
+
+/* Coverage grid */
+.coverage-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:28px;}
+.coverage-card{background:white;border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+.coverage-card-head{padding:11px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.coverage-card-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-3);}
+.coverage-card-body{padding:12px 16px;}
+.value-row{display:grid;grid-template-columns:130px 1fr 50px;align-items:center;gap:10px;padding:7px 14px;border-bottom:1px solid var(--paper-3);}
+.value-row:last-child{border-bottom:none;}
+.value-label{font-size:11px;font-weight:500;color:var(--ink-2);}
+.value-bar-wrap{height:8px;background:var(--paper-3);border-radius:4px;overflow:hidden;}
+.value-bar{height:100%;border-radius:4px;}
+.value-count{font-family:var(--mono);font-size:11px;color:var(--ink-3);text-align:right;}
+
+/* Gap bars */
+.gap-bar{display:flex;align-items:flex-start;gap:10px;padding:8px 12px;background:var(--coral-l);border-radius:6px;margin-bottom:6px;font-size:12px;color:var(--coral-d);line-height:1.5;}
+.gap-bar::before{content:"⚑";flex-shrink:0;margin-top:1px;}
+.gap-btn{display:inline-block;margin-top:6px;font-size:11px;font-weight:600;padding:4px 10px;background:var(--coral);color:white;border:none;border-radius:5px;cursor:pointer;transition:background .15s;}
+.gap-btn:hover{background:var(--coral-d);}
+
+/* Piece log */
+.piece-log{background:white;border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:28px;}
+.piece-log-head{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.piece-log-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-3);}
+.piece-row{display:grid;grid-template-columns:28px 1fr 110px 80px 70px 60px 80px 90px;font-size:12px;border-bottom:1px solid var(--border);align-items:center;}
+.piece-row:last-child{border-bottom:none;}
+.piece-row.header{background:var(--paper-3);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-3);}
+.pc{padding:9px 10px;border-right:1px solid var(--border);}
+.pc:last-child{border-right:none;}
+.piece-status{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;letter-spacing:.04em;white-space:nowrap;}
+.piece-promote-btn{font-size:10px;font-weight:600;padding:3px 8px;background:var(--teal-l);color:var(--teal-d);border:1px solid var(--teal);border-radius:4px;cursor:pointer;transition:all .15s;white-space:nowrap;}
+.piece-promote-btn:hover{background:var(--teal);color:white;}
+
+/* Topography */
+.topo-section{margin-bottom:28px;}
+.topo-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-3);margin-bottom:12px;}
+.topo-chart{background:white;border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+
+/* Production load bars */
+.load-card{background:white;border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:28px;}
+.load-head{padding:11px 16px;border-bottom:1px solid var(--border);}
+.load-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-3);}
+.load-sub{font-size:11px;color:var(--ink-3);font-style:italic;margin-top:2px;}
+.load-body{padding:14px 16px;display:flex;flex-direction:column;gap:10px;}
+.load-row{display:flex;align-items:center;gap:12px;}
+.load-owner{font-size:12px;font-weight:500;color:var(--ink-2);min-width:80px;}
+.load-bar-wrap{flex:1;height:12px;background:var(--paper-3);border-radius:6px;overflow:hidden;}
+.load-bar{height:100%;border-radius:6px;transition:width .8s ease;}
+.load-count{font-family:var(--mono);font-size:11px;color:var(--ink-3);min-width:50px;text-align:right;}
+
+/* Import modal */
+.import-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;align-items:center;justify-content:center;}
+.import-modal.open{display:flex;}
+.import-box{background:white;border-radius:12px;padding:28px;width:560px;max-height:80vh;overflow-y:auto;}
+.import-title{font-family:var(--serif);font-size:20px;margin-bottom:8px;}
+.import-desc{font-size:13px;color:var(--ink-3);margin-bottom:16px;line-height:1.5;}
+.import-textarea{width:100%;height:180px;padding:12px;font-family:var(--mono);font-size:11px;color:var(--ink);background:var(--paper-2);border:1px solid var(--border);border-radius:8px;resize:vertical;outline:none;line-height:1.5;}
+.import-textarea:focus{border-color:var(--coral);}
+.import-actions{display:flex;gap:8px;margin-top:12px;}
+
+/* Cal empty state */
+.cal-empty{text-align:center;padding:80px 20px;color:var(--ink-3);}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="logo">
+    <span class="logo-mark">B&Co</span>
+    <span class="logo-sub">Content Matrix AI</span>
+    <span class="logo-v">v7</span>
+  </div>
+  <div class="nav-tabs">
+    <div class="nav-tab active" onclick="showPage('matrix',this)">Matrix</div>
+    <div class="nav-tab" onclick="showPage('session',this)">Session Log</div>
+    <div class="nav-tab" onclick="showPage('calendar',this)">Calendar</div>
+  </div>
+  <div class="nav-kpi">Success = local Triad engagement that generates inbound interest or deepens relationships.</div>
+</nav>
+
+<!-- ══════════ MATRIX PAGE ══════════ -->
+<div class="page active" id="page-matrix">
+<div class="matrix-layout">
+  <div class="input-panel">
+    <div class="eyebrow">Content idea engine</div>
+    <h1 class="input-heading">Matrix</h1>
+    <p class="input-sub">Score a freestanding idea — or generate a slate of ideas calibrated to your gaps and goals.</p>
+
+    <div class="mode-tabs">
+      <div class="mode-tab active" id="tab-score" onclick="setMode('score')">Score an idea</div>
+      <div class="mode-tab" id="tab-generate" onclick="setMode('generate')">Generate ideas</div>
+    </div>
+
+    <!-- ── SCORE MODE ── -->
+    <div id="scoreMode">
+      <textarea class="idea-box" id="ideaInput" placeholder="e.g. Sandy goes to Target and asks people to guess which of two homes costs more..."></textarea>
+      <div class="threads-label">Conversation room — pre-route (optional)</div>
+      <div class="thread-scroll" id="threadChips">
+        <div class="thread-lane-label" style="color:var(--amber)">Buyer / Seller</div>
+        <div class="thread-chips">
+          <span class="thread-chip" data-thread="What does buying or selling feel like right now?">Market conditions right now</span>
+          <span class="thread-chip" data-thread="What actually makes my home sell for more or less?">What makes my home sell for more/less?</span>
+          <span class="thread-chip" data-thread="How do I maximize my experience as a first-timer?">First-timer maximization</span>
+          <span class="thread-chip" data-thread="What do interest rates actually mean for me?">Interest rates demystified</span>
+          <span class="thread-chip" data-thread="What does it actually cost to buy or sell? No fluff.">Real costs — no fluff</span>
+          <span class="thread-chip" data-thread="How do I know if my agent is actually doing their job?">Is my agent BS-ing me?</span>
+          <span class="thread-chip" data-thread="What does a real estate agent actually do?">What does an agent actually do?</span>
+          <span class="thread-chip" data-thread="Why does process matter in a real estate deal?">Why does process matter?</span>
+          <span class="thread-chip" data-thread="How long does buying or selling actually take?">How long does this take?</span>
+          <span class="thread-chip" data-thread="What happens if I back out of a deal?">What if I back out?</span>
+          <span class="thread-chip" data-thread="I sold my home and have nowhere to go — now what?">I sold with nowhere to go</span>
+          <span class="thread-chip" data-thread="How do I actually find the right realtor for me?">How do I find the right realtor?</span>
+          <span class="thread-chip" data-thread="Can Zillow or AI actually do what an agent does?">Can Zillow/AI replace my agent?</span>
+          <span class="thread-chip" data-thread="What actually makes a great real estate agent?">What makes a great agent?</span>
+          <span class="thread-chip" data-thread="Where are the foreclosures and distressed properties?">Foreclosures + distressed properties</span>
+        </div>
+        <div class="thread-lane-label" style="color:var(--teal)">Market / Community</div>
+        <div class="thread-chips">
+          <span class="thread-chip" data-thread="What is it actually like to live in Burlington?">What's it like to live in Burlington?</span>
+          <span class="thread-chip" data-thread="Where should I go and eat in Alamance County?">Best places to visit + eat locally</span>
+          <span class="thread-chip" data-thread="What's actually worth getting involved in around here?">What to get involved in here</span>
+          <span class="thread-chip" data-thread="What kinds of listings are selling — and which aren't?">What's selling / what isn't</span>
+          <span class="thread-chip" data-thread="What bigger economic forces are shaping our local market?">Macro forces shaping local market</span>
+          <span class="thread-chip" data-thread="Is bad publicity ever good publicity?">Is bad publicity good publicity?</span>
+          <span class="thread-chip" data-thread="What neighborhoods should I be paying attention to right now?">Neighborhoods to watch</span>
+          <span class="thread-chip" data-thread="What does Burlington's growth mean for property values?">Burlington growth + property values</span>
+        </div>
+        <div class="thread-lane-label" style="color:var(--purple)">Agent / Internal</div>
+        <div class="thread-chips">
+          <span class="thread-chip" data-thread="How do I sell my listings faster and at better prices?">How do I sell my listings better?</span>
+          <span class="thread-chip" data-thread="How do I drum up business when times are slow?">Business development in slow times</span>
+          <span class="thread-chip" data-thread="How do I actually post video content that works?">How to post effective video content</span>
+          <span class="thread-chip" data-thread="What does it really cost to start a real estate career?">Cost to start a real estate career</span>
+          <span class="thread-chip" data-thread="How does B&Co's tech stack make agents better?">How B&Co tech makes agents better</span>
+          <span class="thread-chip" data-thread="What does the best version of a B&Co agent look like?">Best version of a B&Co agent</span>
+          <span class="thread-chip" data-thread="What does this month's data mean for your client conversations?">Monthly data → client conversations</span>
+          <span class="thread-chip" data-thread="Who is B&Co and why does this firm exist?">Who is B&Co and why do we exist?</span>
+          <span class="thread-chip" data-thread="What is it actually like to work at B&Co day to day?">What's it like to work at B&Co?</span>
+          <span class="thread-chip" data-thread="What does our listing presentation and onboarding look like?">Our listing presentation + onboarding</span>
+          <span class="thread-chip" data-thread="What client wins and moments are we most proud of?">Client wins we're proud of</span>
+          <span class="thread-chip" data-thread="What does B&Co do differently than every other brokerage here?">What B&Co does differently</span>
+        </div>
+      </div>
+      <button class="analyze-btn" id="analyzeBtn" onclick="analyzeIdea()">Run through the matrix</button>
+      <div class="loading-bar" id="loadingBar"><div class="loading-fill"></div></div>
+    </div>
+
+    <!-- ── GENERATE MODE ── -->
+    <div id="generateMode">
+      <div class="gen-section">
+        <div class="gen-label">Target rooms <span style="font-weight:400;text-transform:none;font-style:italic;color:var(--ink-3)">(pick 1–3, or use gap fill)</span></div>
+        <div class="gen-room-grid" id="genRoomGrid">
+          <!-- populated by JS -->
+        </div>
+        <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="gen-gap-btn" id="genGapBtn" onclick="toggleGapMode()">⚑ Fill calendar gaps automatically</button>
+          <button class="gen-gap-btn" onclick="clearGenRooms()">Clear selection</button>
+        </div>
+      </div>
+
+      <div class="gen-section">
+        <div class="gen-label">Production capacity this period</div>
+        <div class="gen-row">
+          <select class="gen-select" id="genVideoCount">
+            <option value="1">1 video</option>
+            <option value="2" selected>2 videos</option>
+            <option value="3">3 videos</option>
+            <option value="4">4 videos</option>
+            <option value="0">No video</option>
+          </select>
+          <select class="gen-select" id="genStaticCount">
+            <option value="2">2 static/carousel</option>
+            <option value="4" selected>4 static/carousel</option>
+            <option value="6">6 static/carousel</option>
+            <option value="8">8 static/carousel</option>
+          </select>
+        </div>
+        <div class="gen-row">
+          <select class="gen-select" id="genFLMin">
+            <option value="1">Any Format Lift</option>
+            <option value="2">FL 2+ minimum</option>
+            <option value="3" selected>FL 3+ minimum</option>
+          </select>
+          <select class="gen-select" id="genFunnel">
+            <option value="any" selected>Any funnel tier</option>
+            <option value="Top">Top funnel only</option>
+            <option value="Mid">Mid funnel only</option>
+            <option value="mixed">Top + Mid mix</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="gen-section">
+        <div class="gen-label">Context for ideation <span style="font-weight:400;text-transform:none;font-style:italic;color:var(--ink-3)">(optional)</span></div>
+        <textarea class="idea-box" id="genContext" style="min-height:70px" placeholder="e.g. We have no content for the money anxiety rooms. Sandy is available this month. We want something that can work on its own AND generate carousel derivatives."></textarea>
+      </div>
+
+      <div class="gen-note">The engine will generate a scored slate of ideas matched to your inputs. Each idea can be run through full scoring or approved directly to the calendar.</div>
+      <button class="analyze-btn" id="generateBtn" onclick="generateIdeas()">Generate idea slate</button>
+      <div class="loading-bar" id="genLoadingBar"><div class="loading-fill"></div></div>
+    </div>
+
+    <div class="lens-legend">
+      <div class="legend-title">The 5 lenses</div>
+      <div class="legend-arch">Relationships is the root value. Knowledge and Process are its wings.</div>
+      <div class="lens-pills">
+        <div class="lens-pill-row"><div class="lens-dot" style="background:#BA7517"></div><span class="lens-pill-name">Knowledge</span><span class="lens-pill-desc">Local, specific, actionable</span></div>
+        <div class="lens-pill-row"><div class="lens-dot" style="background:#D85A30"></div><span class="lens-pill-name">Relationships <span class="root-badge">Root</span></span><span class="lens-pill-desc">Depth of humanness — shown, not stated</span></div>
+        <div class="lens-pill-row"><div class="lens-dot" style="background:#185FA5"></div><span class="lens-pill-name">Process / Credibility</span><span class="lens-pill-desc">The standard everyone else skips</span></div>
+        <div class="lens-pill-row"><div class="lens-dot" style="background:#0F6E56"></div><span class="lens-pill-name">Listing Exposure</span><span class="lens-pill-desc">Every listing is a brand statement</span></div>
+        <div class="lens-pill-row"><div class="lens-dot" style="background:#534AB7"></div><span class="lens-pill-name">Agent Enablement</span><span class="lens-pill-desc">The firm synthesizes so agents don't have to</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="results-panel" id="resultsPanel">
+    <div class="results-empty" id="emptyState">
+      <div class="empty-mark">&#x2197;</div>
+      <div class="empty-text">Score a freestanding idea or generate a targeted slate. Results appear here.</div>
+    </div>
+    <div id="resultsContent" style="display:none"></div>
+    <div id="genResultsContent" style="display:none"></div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════ SESSION PAGE ══════════ -->
+<div class="page" id="page-session">
+<div class="session-layout">
+  <div class="session-header">
+    <div>
+      <div class="session-heading">Session Log</div>
+      <div class="session-sub">Every idea scored this session — in order.</div>
+    </div>
+    <div class="session-stats">
+      <div class="session-stat"><div class="session-stat-val" id="sessionCount">0</div><div class="session-stat-label">Ideas scored</div></div>
+      <div class="session-stat"><div class="session-stat-val" id="sessionAvgScore">—</div><div class="session-stat-label">Avg score</div></div>
+      <div class="session-stat"><div class="session-stat-val" id="sessionAvgFL">—</div><div class="session-stat-label">Avg FL</div></div>
+      <button class="session-clear-btn" onclick="clearSession()">Clear session</button>
+    </div>
+  </div>
+  <div id="sessionEmpty" class="session-empty">
+    <div style="font-family:var(--serif);font-size:40px;color:var(--paper-3);margin-bottom:12px;">&#x23F1;</div>
+    <div style="font-size:13px;line-height:1.6;max-width:300px;margin:0 auto;">No ideas scored yet. Run something through the matrix and it will appear here.</div>
+  </div>
+  <div id="sessionFeed"></div>
+</div>
+</div>
+
+<!-- ══════════ CALENDAR PAGE ══════════ -->
+<div class="page" id="page-calendar">
+<div class="cal-layout">
+  <div class="cal-header">
+    <div>
+      <div class="cal-heading">Content Calendar</div>
+      <div class="cal-sub">Production schedule, nutrition facts, room health, and gap-driven ideation feedback loop.</div>
+    </div>
+    <div class="cal-actions">
+      <button class="cal-btn secondary" onclick="loadCalSampleData()">Load sample data</button>
+      <button class="cal-btn secondary" onclick="openImport()">Import from Monday / Later</button>
+    </div>
+  </div>
+
+  <div class="horizon-tabs">
+    <div class="horizon-tab active" onclick="setHorizon('active',this)">Active this month</div>
+    <div class="horizon-tab" onclick="setHorizon('planned',this)">Planned (next 60d)</div>
+    <div class="horizon-tab" onclick="setHorizon('published',this)">Published</div>
+    <div class="horizon-tab" onclick="setHorizon('all',this)">All horizons</div>
+  </div>
+
+  <div id="calEmpty" class="cal-empty">
+    <div style="font-family:var(--serif);font-size:40px;color:var(--paper-3);margin-bottom:12px;">&#x25A4;</div>
+    <div style="font-size:13px;line-height:1.6;max-width:360px;margin:0 auto;">Import content from Monday.com or Later.com — or load sample data. Approved ideas from the Matrix flow here automatically.</div>
+  </div>
+
+  <div id="calContent" style="display:none">
+
+    <!-- AGGREGATE CARDS -->
+    <div class="agg-cards" id="calAggCards"></div>
+
+    <!-- NUTRITION + SIDEBAR -->
+    <div class="nutrition-section">
+      <div class="topo-label" style="margin-bottom:14px;">Content nutrition facts — what this period is made of</div>
+      <div style="display:grid;grid-template-columns:480px 1fr;gap:24px;align-items:start;">
+        <div class="nutrition-label-card" id="nutritionLabel"></div>
+        <div id="nutritionSidebar"></div>
+      </div>
+    </div>
+
+    <!-- PRODUCTION LOAD -->
+    <div class="load-card">
+      <div class="load-head">
+        <div class="load-title">Production load by owner</div>
+        <div class="load-sub">Active + planned pieces assigned to each team member this period</div>
+      </div>
+      <div class="load-body" id="loadBody"></div>
+    </div>
+
+    <!-- ROOM HEALTH + GAP ANALYSIS -->
+    <div class="coverage-grid" style="margin-bottom:28px">
+      <div class="coverage-card">
+        <div class="coverage-card-head">
+          <span class="coverage-card-title">Conversation room activity</span>
+          <span style="font-size:11px;color:var(--ink-3)">pieces per room</span>
+        </div>
+        <div class="coverage-card-body" id="roomHealthGrid" style="padding:0"></div>
+      </div>
+      <div class="coverage-card">
+        <div class="coverage-card-head">
+          <span class="coverage-card-title">Gap analysis</span>
+          <span style="font-size:11px;color:var(--ink-3)">what's missing</span>
+        </div>
+        <div class="coverage-card-body" id="gapCard"></div>
+      </div>
+    </div>
+
+    <!-- TOPOGRAPHY -->
+    <div class="topo-section">
+      <div class="topo-label">Coverage topography — pieces by lens</div>
+      <div class="topo-chart" id="topoChart"></div>
+    </div>
+
+    <!-- FORMAT VALUE -->
+    <div class="coverage-grid">
+      <div class="coverage-card">
+        <div class="coverage-card-head">
+          <span class="coverage-card-title">Format value layers</span>
+          <span style="font-size:11px;color:var(--ink-3)">Format Lift distribution</span>
+        </div>
+        <div class="coverage-card-body" id="formatValueChart"></div>
+      </div>
+      <div class="coverage-card">
+        <div class="coverage-card-head">
+          <span class="coverage-card-title">Repurposing leverage</span>
+          <span style="font-size:11px;color:var(--ink-3)">derivative potential</span>
+        </div>
+        <div class="coverage-card-body" id="repurposeCard"></div>
+      </div>
+    </div>
+
+    <!-- PIECE LOG -->
+    <div class="piece-log">
+      <div class="piece-log-head">
+        <span class="piece-log-title">Piece log</span>
+        <span id="pieceCount" style="font-size:11px;color:var(--ink-3)"></span>
+      </div>
+      <div class="piece-row header">
+        <div class="pc">#</div>
+        <div class="pc">Title</div>
+        <div class="pc">Room</div>
+        <div class="pc">Lens</div>
+        <div class="pc">Format</div>
+        <div class="pc">FL</div>
+        <div class="pc">Status</div>
+        <div class="pc">Owner</div>
+      </div>
+      <div id="pieceLog"></div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<!-- IMPORT MODAL -->
+<div class="import-modal" id="importModal">
+  <div class="import-box">
+    <div class="import-title">Import content data</div>
+    <div class="import-desc">Paste a JSON export from Monday.com or Later.com, or from Connor's n8n export. Expected: array of content objects. <a href="#" onclick="showImportSchema();return false;" style="color:var(--coral)">See schema</a></div>
+    <textarea class="import-textarea" id="importText" placeholder='[{"title":"Sandy price-guess reel","lens":"Knowledge","conv_match":"...","format":"Reel","format_lift":4,"status":"Published","horizon":"published","owner":"Sandy"},...]'></textarea>
+    <div id="importSchema" style="display:none;background:var(--paper-2);border-radius:8px;padding:12px;margin-top:10px;font-family:var(--mono);font-size:10px;color:var(--ink-2);line-height:1.6;white-space:pre-wrap;"></div>
+    <div class="import-actions">
+      <button class="analyze-btn" style="flex:1;margin-top:0" onclick="processImport()">Import</button>
+      <button class="cal-btn secondary" onclick="closeImport()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════
+// CONSTANTS
+// ══════════════════════════════════════
+// ── STATE (declared first to avoid initialization errors) ──
+let calendarData=[];
+let currentHorizon='active';
+let sessionData=[];
+let sessionStartTime=new Date();
+let genGapMode=false;
+let selectedGenRooms=[];
+
+const LENS_COLORS = {
+  "Knowledge":             {bg:"#FAEEDA",text:"#633806",dot:"#BA7517"},
+  "Relationships":         {bg:"#FAECE7",text:"#712B13",dot:"#D85A30"},
+  "Process / Credibility": {bg:"#E6F1FB",text:"#0C447C",dot:"#185FA5"},
+  "Listing Exposure":      {bg:"#E1F5EE",text:"#085041",dot:"#0F6E56"},
+  "Agent Enablement":      {bg:"#EEEDFE",text:"#3C3489",dot:"#534AB7"},
+};
+const AUD_COLORS = {
+  "Brand awareness":{bg:"#FAECE7",text:"#712B13"},
+  "Client attraction":{bg:"#E1F5EE",text:"#085041"},
+  "Recruitment":{bg:"#FAEEDA",text:"#633806"},
+  "Agent enablement":{bg:"#EEEDFE",text:"#3C3489"}
+};
+const FL_COLORS = ["","#888780","#BA7517","#0F6E56","#534AB7"];
+const FL_CLASSES = ["","a1","a2","a3","a4"];
+const FL_LABELS = ["","On the nose","Light hook","Format doing work","Format is the idea"];
+const STATUS_COLORS = {
+  "Published":{bg:"#E1F5EE",text:"#085041"},
+  "In Production":{bg:"#FAEEDA",text:"#633806"},
+  "Approved":{bg:"#E6F1FB",text:"#0C447C"},
+  "Planned":{bg:"#EEEDFE",text:"#3C3489"},
+  "Scored":{bg:"#E8E5DE",text:"#5F5E5A"}
+};
+const LENSES = ["Knowledge","Relationships","Process / Credibility","Listing Exposure","Agent Enablement"];
+const ALL_ROOMS = [
+  "What does buying or selling feel like right now?",
+  "What actually makes my home sell for more or less?",
+  "How do I maximize my experience as a first-timer?",
+  "What do interest rates actually mean for me?",
+  "What does it actually cost to buy or sell? No fluff.",
+  "How do I know if my agent is actually doing their job?",
+  "What does a real estate agent actually do?",
+  "Why does process matter in a real estate deal?",
+  "How long does buying or selling actually take?",
+  "What happens if I back out of a deal?",
+  "I sold my home and have nowhere to go — now what?",
+  "How do I actually find the right realtor for me?",
+  "Can Zillow or AI actually do what an agent does?",
+  "What actually makes a great real estate agent?",
+  "Where are the foreclosures and distressed properties?",
+  "What is it actually like to live in Burlington?",
+  "Where should I go and eat in Alamance County?",
+  "What's actually worth getting involved in around here?",
+  "What kinds of listings are selling — and which aren't?",
+  "What bigger economic forces are shaping our local market?",
+  "Is bad publicity ever good publicity?",
+  "What neighborhoods should I be paying attention to right now?",
+  "What does Burlington's growth mean for property values?",
+  "How do I sell my listings faster and at better prices?",
+  "How do I drum up business when times are slow?",
+  "How do I actually post video content that works?",
+  "What does it really cost to start a real estate career?",
+  "How does B&Co's tech stack make agents better?",
+  "What does the best version of a B&Co agent look like?",
+  "What does this month's data mean for your client conversations?",
+  "Who is B&Co and why does this firm exist?",
+  "What is it actually like to work at B&Co day to day?",
+  "What does our listing presentation and onboarding look like?",
+  "What client wins and moments are we most proud of?",
+  "What does B&Co do differently than every other brokerage here?"
+];
+const OWNER_COLORS = {
+  "Brandon":"#D85A30","Emily":"#185FA5","Nigel":"#534AB7",
+  "Connor":"#0F6E56","Sandy":"#BA7517","Claire":"#639922","Agent-led":"#888780"
+};
+
+// ══════════════════════════════════════
+// SHARED SYSTEM PROMPT
+// ══════════════════════════════════════
+const SYSTEM_PROMPT = `You are the B&Co Content Matrix AI for Barbour & Company, a real estate brokerage in Burlington, NC (serving the Triad region). Your job is to analyze content ideas against the firm's content matrix and return structured JSON.
+
+FIRM CONTEXT
+Market: Burlington / Alamance County, NC — hyper-local Triad focus. Success = local engagement generating inbound agent or client interest, or meaningfully deepening existing relationships. Followers outside the Triad are noise. National reach and viral impressions from outside NC are not success signals.
+Tech stack: Monday.com, Follow Up Boss, RealScout, n8n/Make, Later.com.
+
+TEAM ROLES
+BRANDON BARBOUR — Vision Owner. Owns: strategy, final approval, brand voice, market commentary. Does not touch: production scheduling, video editing, social posting, board management.
+EMILY ALLRED — Director of Operations. Owns: written briefs, Monday board, visual production coordination, print collateral, distribution coordination. Does not touch: video production, primary ideation, strategy decisions.
+NIGEL — Creative Director / Video. Owns: all video (Reels, YouTube, short-form), on-location filming, B-roll library, monthly Agent Enablement skill brief video. Does not touch: written content, print, board management. Format Lift 3–4 almost always routes to Nigel.
+CONNOR HEAD — Automations / Distribution. Owns: n8n/Make workflows, Monday API integrations, distribution triggers, FUB automations. Never the content owner — infrastructure owner only.
+SANDY — Agent, Street-Facing Talent. High-energy on-camera, street interviews, price guesses. Always needs Nigel as production partner.
+CLAIRE — Agent. Ideation and brief on pieces with direct client context. Process/credibility content.
+AGENT-LED — when an agent is the primary on-camera talent. Always flag production support owner.
+COLLABORATIVE — only when 2+ owners genuinely required at production level.
+
+LENS ARCHITECTURE: Relationships is the root value. Knowledge and Process/Credibility are its wings.
+
+LENS 1 — KNOWLEDGE (Amber) · "What's really happening out there" · Wing of Relationships
+Measures: Whether the idea transfers something specific and actionable. What does someone know or decide better after this? Grounded in local Triad reality.
+High score: Local market data, decision-stage education, myth-busting with local grounding, community knowledge.
+Failure mode: Vague truisms. Could have been written by anyone anywhere. No specific takeaway.
+
+LENS 2 — RELATIONSHIPS (Coral) · "Why this place feels different" · Root brand value
+Measures: Depth of humanness — not presence of a person on screen. Whether the idea honors what the transaction actually is: shelter, a home, the largest budget line most families carry.
+High score: Real moments. Content acknowledging the weight of the transaction. Community presence as neighbors. Warmth earned by the moment.
+Failure mode: Performs warmth without earning it. Smiling headshots. "We love our clients."
+
+LENS 3 — PROCESS / CREDIBILITY (Blue) · "The standard everyone else skips" · Wing of Relationships
+Measures: Whether the idea shows B&Co at a higher standard than the market expects — revealing a specific process moment consumers didn't know existed.
+High score: Transparency pieces. What most agents skip. Behind-the-scenes of operations. "I didn't know they did that."
+Failure mode: Generic "great process" slogans without demonstration.
+
+LENS 4 — LISTING EXPOSURE (Teal) · "Homes we're proud to represent" · Core function
+Measures: Whether a piece directly serves or extends a listing's reach. Scores integration across channels.
+High score: Walkthroughs at a shareable standard. Just-listed with full context. Brand content that draws eyes to listings.
+Failure mode: Great video with no QR on the sign. Listing content in isolation.
+
+LENS 5 — AGENT ENABLEMENT (Purple) · "What works right now — go do this" · Internal + external
+Measures: Whether the idea genuinely equips an agent at a specific stage. Flags internal-only vs. public-shareable.
+High score: Monthly skill brief. Internal playbooks. Public agent education. Recruiting-adjacent content.
+Failure mode: Aspirational content with no specific takeaway.
+
+FORMAT LIFT (1–4):
+1 — ON THE NOSE: Direct delivery. Talking head. Works for warm audiences; scrolled past cold.
+2 — LIGHT HOOK: Strong opening or counter-intuitive frame. Earns seconds but doesn't carry through.
+3 — FORMAT DOING WORK: Form and content create tension or curiosity. Format is why someone watches to the end.
+4 — FORMAT IS THE IDEA: Form and content inseparable. Reason to watch independent of real estate interest.
+If Format Lift 1–2, refinement_suggestions MUST name the specific format mechanism that moves it to a 3.
+
+PRODUCTION DIFFICULTY: 1 Easy · 2 Low-Med · 3 Medium · 4 High
+Consider: number of locations, coordination required, pre-production complexity, number of stakeholders, Format Lift vs. execution cost.
+
+REPURPOSING RULE: For each piece, name the specific derivative sub-tasks that can be produced from the source material — not just format names. E.g. "Clip 3 pull quotes for static posts (Emily, ~45min each)" not just "Static post."
+
+CONVERSATION ROOMS — 35 active rooms:
+01. What does buying or selling feel like right now? [Knowledge · Top]
+02. What actually makes my home sell for more or less? [Knowledge · Mid · High FL potential]
+03. How do I maximize my experience as a first-timer? [Knowledge + Relationships · Mid]
+04. What do interest rates actually mean for me? [Knowledge · Top/Mid]
+05. What does it actually cost to buy or sell? No fluff. [Process/Credibility · Mid · Radical transparency]
+06. How do I know if my agent is actually doing their job? [Process/Credibility · Top · Skeptic]
+07. What does a real estate agent actually do? [Process/Credibility · Top]
+08. Why does process matter in a real estate deal? [Process/Credibility · Mid]
+09. How long does buying or selling actually take? [Knowledge · Top/Mid]
+10. What happens if I back out of a deal? [Process/Credibility · Mid · High stakes]
+11. I sold my home and have nowhere to go — now what? [Relationships + Process · Mid · High FL]
+12. How do I actually find the right realtor for me? [Process/Credibility · Top · Recruiting adjacent]
+13. Can Zillow or AI actually do what an agent does? [Process/Credibility · Top · Timely]
+14. What actually makes a great real estate agent? [Relationships + Credibility · Top]
+15. Where are the foreclosures and distressed properties? [Knowledge · Mid · Niche]
+16. What is it actually like to live in Burlington? [Relationships · Top · Relocation]
+17. Where should I go and eat in Alamance County? [Relationships · Top · Sandy format · High FL]
+18. What's actually worth getting involved in around here? [Relationships · Top · Community]
+19. What kinds of listings are selling — and which aren't? [Knowledge + Listing · Mid]
+20. What bigger economic forces are shaping our local market? [Knowledge · Top · Brandon-led]
+21. Is bad publicity ever good publicity? [Process/Credibility · Top · High FL]
+22. What neighborhoods should I be paying attention to right now? [Knowledge + Listing · Mid · Hyper-local]
+23. What does Burlington's growth mean for property values? [Knowledge · Mid · Investor]
+24. How do I sell my listings faster and at better prices? [Agent Enablement · Internal · Skill brief]
+25. How do I drum up business when times are slow? [Agent Enablement · Internal + Recruiting]
+26. How do I actually post video content that works? [Agent Enablement · Internal · Nigel-led · High FL]
+27. What does it really cost to start a real estate career? [Agent Enablement · Recruiting · Radical transparency]
+28. How does B&Co's tech stack make agents better? [Process + Agent Enablement · Recruiting]
+29. What does the best version of a B&Co agent look like? [Relationships + Agent Enablement · Recruiting]
+30. What does this month's data mean for your client conversations? [Agent Enablement + Knowledge · Internal · Monthly]
+31. Who is B&Co and why does this firm exist? [Relationships · All audiences · Brand foundation]
+32. What is it actually like to work at B&Co day to day? [Relationships · Recruiting · Culture]
+33. What does our listing presentation and onboarding look like? [Process + Listing · Mid · Behind-the-scenes]
+34. What client wins and moments are we most proud of? [Relationships · Mid/Bottom · Real moments]
+35. What does B&Co do differently than every other brokerage here? [Process + Relationships · All · Differentiation anchor]`;
+
+const SCORE_SCHEMA = `Return ONLY valid JSON, no preamble, no markdown:
+{
+  "primary_lens":"exact lens name from the 5",
+  "secondary_lenses":[],
+  "overall_score":"[0-100]",
+  "verdict":"Green light / Needs refinement / Park it — one sentence with specific reason",
+  "lens_scores":{"Knowledge":"[0-100]","Relationships":"[0-100]","Process / Credibility":"[0-100]","Listing Exposure":"[0-100]","Agent Enablement":"[0-100]"},
+  "lens_score_rationale":{"Knowledge":"one sentence","Relationships":"one sentence","Process / Credibility":"one sentence","Listing Exposure":"one sentence","Agent Enablement":"one sentence"},
+  "format_lift":"[1-4]",
+  "format_lift_label":"On the nose / Light hook / Format doing work / Format is the idea",
+  "format_lift_rationale":"one sentence — mechanism present or what would move it to FL3",
+  "audiences":[],
+  "funnel_tier":"Top / Mid / Bottom / Internal",
+  "narrative_thread":"best-fit thread",
+  "thread_rationale":"one sentence",
+  "conv_match":"best-fit conversation room name from the 35",
+  "conv_match_rationale":"one sentence",
+  "content_formats":{"primary":"main format","repurposing":[],"repurposing_notes":"1-2 sentences on specific derivative sub-tasks with owner and time estimate","format_limitations":"one sentence"},
+  "production_difficulty":"[1-4]",
+  "difficulty_label":"Easy / Low-Med / Medium / High",
+  "production_notes":"2-3 sentences",
+  "suggested_owner":"primary owner from team roster",
+  "support_owner":"support role or null",
+  "owner_rationale":"one sentence",
+  "workflow_steps":["4-5 short steps under 12 words each"],
+  "monday_item":"one-line Monday board item title",
+  "monday_export":{"item_name":"board item title","group":"primary lens name","assignee_primary":"primary owner","assignee_support":"support owner or null","status":"Approved","difficulty":"[1-4]","funnel_tier":"Top / Mid / Bottom / Internal","conversation":"conv_match value","format":"primary content format","format_lift":"[1-4]","due_date_offset_days":"[3-21]","description_block":"production_notes followed by numbered workflow steps as plain text"},
+  "related_threads":["1-3 adjacent conversation rooms"],
+  "refinement_suggestions":"2-3 sentences. If Format Lift 1-2, name the specific mechanism to move to FL3.",
+  "kpi_focus":"specific metric: saves, DMs, profile visits, link clicks, CRM entries, referrals, showings",
+  "distribution_notes":"channel, timing, format guidance",
+  "engagement_hooks":"caption angles, CTA ideas, comment-bait"
+}`;
+
+// ══════════════════════════════════════
+// NAV
+// ══════════════════════════════════════
+function showPage(p, el){
+  document.querySelectorAll('.page').forEach(e=>e.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(e=>e.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('active');
+  if(el) el.classList.add('active');
+  if(p==='session') renderSession();
+  if(p==='calendar') renderCalendar();
+}
+
+// ══════════════════════════════════════
+// MODE TABS
+// ══════════════════════════════════════
+function setMode(mode){
+  document.getElementById('tab-score').classList.toggle('active', mode==='score');
+  document.getElementById('tab-generate').classList.toggle('active', mode==='generate');
+  document.getElementById('scoreMode').style.display = mode==='score' ? 'block' : 'none';
+  document.getElementById('generateMode').style.display = mode==='generate' ? 'block' : 'none';
+  document.getElementById('resultsContent').style.display='none';
+  document.getElementById('genResultsContent').style.display='none';
+  document.getElementById('emptyState').style.display='flex';
+}
+
+// ══════════════════════════════════════
+// THREAD CHIPS (score mode)
+// ══════════════════════════════════════
+document.getElementById('threadChips').addEventListener('click',e=>{
+  const chip=e.target.closest('.thread-chip');
+  if(chip) chip.classList.toggle('selected');
+});
+function getSelectedThreads(){
+  return [...document.querySelectorAll('#threadChips .thread-chip.selected')].map(c=>c.dataset.thread);
+}
+
+// ══════════════════════════════════════
+// GENERATE MODE ROOM GRID
+// ══════════════════════════════════════
+
+function buildGenRoomGrid(){
+  const grid = document.getElementById('genRoomGrid');
+  grid.innerHTML = ALL_ROOMS.map((room,i)=>{
+    const calData = calendarData;
+    const count = calData.filter(d=>d.conv_match===room).length;
+    const badge = count > 0 ? `<span style="font-size:9px;color:var(--ink-3);margin-left:4px">(${count})</span>` : `<span style="font-size:9px;color:var(--coral);margin-left:4px">empty</span>`;
+    return `<div class="gen-room-chip" data-room="${room}" onclick="toggleGenRoom(this,'${room.replace(/'/g,"\\'")}')">
+      <span style="font-size:9px;color:var(--ink-3);margin-right:4px">${String(i+1).padStart(2,'0')}</span>${room}${badge}
+    </div>`;
+  }).join('');
+}
+
+function toggleGenRoom(el, room){
+  if(genGapMode){ genGapMode=false; document.getElementById('genGapBtn').classList.remove('active'); }
+  el.classList.toggle('selected');
+  if(el.classList.contains('selected')){
+    if(!selectedGenRooms.includes(room)) selectedGenRooms.push(room);
+  } else {
+    selectedGenRooms = selectedGenRooms.filter(r=>r!==room);
+  }
+}
+
+function clearGenRooms(){
+  selectedGenRooms=[];
+  genGapMode=false;
+  document.getElementById('genGapBtn').classList.remove('active');
+  document.querySelectorAll('.gen-room-chip').forEach(c=>c.classList.remove('selected'));
+}
+
+function toggleGapMode(){
+  genGapMode = !genGapMode;
+  document.getElementById('genGapBtn').classList.toggle('active', genGapMode);
+  if(genGapMode){
+    selectedGenRooms=[];
+    document.querySelectorAll('.gen-room-chip').forEach(c=>c.classList.remove('selected'));
+  }
+}
+
+// Build grid on load
+buildGenRoomGrid();
+
+// ══════════════════════════════════════
+// SCORE AN IDEA
+// ══════════════════════════════════════
+async function analyzeIdea(){
+  const idea = document.getElementById('ideaInput').value.trim();
+  if(!idea) return;
+  const threads = getSelectedThreads();
+  const btn = document.getElementById('analyzeBtn');
+  const bar = document.getElementById('loadingBar');
+  btn.disabled=true; btn.textContent='Analyzing...'; bar.classList.add('active');
+  document.getElementById('emptyState').style.display='none';
+  document.getElementById('resultsContent').style.display='none';
+  document.getElementById('genResultsContent').style.display='none';
+
+  const userMsg = `Content idea: ${idea}${threads.length?`\n\nSelected narrative threads: ${threads.join(', ')}`:''}
+
+${SCORE_SCHEMA}`;
+
+  try{
+    const response = await fetch("https://api.anthropic.com/v1/messages",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:2000,system:SYSTEM_PROMPT,messages:[{role:"user",content:userMsg}]})
+    });
+    const data = await response.json();
+    const raw = data.content.map(b=>b.text||"").join("");
+    let clean = raw.replace(/```json|```/g,"").trim();
+    const s=clean.indexOf('{'), e=clean.lastIndexOf('}');
+    if(s!==-1&&e!==-1) clean=clean.substring(s,e+1);
+    const result = JSON.parse(clean);
+    renderResults(result);
+    addToSession(result, idea);
+    addToCalendar(result, 'Scored');
+  }catch(err){
+    document.getElementById('resultsContent').innerHTML=`<div style="color:#D85A30;font-size:13px;padding:16px;">Something went wrong.<br><small style="color:#7A7870">${err.message}</small></div>`;
+    document.getElementById('resultsContent').style.display='block';
+  }
+  btn.disabled=false; btn.textContent='Run through the matrix'; bar.classList.remove('active');
+}
+
+// ══════════════════════════════════════
+// GENERATE IDEAS
+// ══════════════════════════════════════
+async function generateIdeas(){
+  const btn = document.getElementById('generateBtn');
+  const bar = document.getElementById('genLoadingBar');
+  btn.disabled=true; btn.textContent='Generating...'; bar.classList.add('active');
+  document.getElementById('emptyState').style.display='none';
+  document.getElementById('resultsContent').style.display='none';
+  document.getElementById('genResultsContent').style.display='none';
+
+  const videoCount = document.getElementById('genVideoCount').value;
+  const staticCount = document.getElementById('genStaticCount').value;
+  const flMin = document.getElementById('genFLMin').value;
+  const funnel = document.getElementById('genFunnel').value;
+  const context = document.getElementById('genContext').value.trim();
+
+  // Build gap context from calendar
+  const gapRooms = calendarData.length ? getGapRooms() : [];
+  const calSummary = calendarData.length
+    ? `Current calendar has ${calendarData.length} pieces. Rooms with 0 content: ${gapRooms.slice(0,8).join(', ')}${gapRooms.length>8?' (and more)':''}.`
+    : 'No calendar data loaded yet.';
+
+  let roomTarget = '';
+  if(genGapMode){
+    roomTarget = `TARGET: Fill the highest-priority gap rooms based on the calendar state above. Prioritize rooms with 0 content and high strategic value (money anxiety, skeptic cluster, Burlington identity rooms).`;
+  } else if(selectedGenRooms.length){
+    roomTarget = `TARGET ROOMS: ${selectedGenRooms.join(' | ')}`;
+  } else {
+    roomTarget = `TARGET: Generate ideas across rooms that serve a broad content calendar — prioritize rooms with the highest strategic leverage for B&Co right now.`;
+  }
+
+  const userMsg = `You are generating a slate of content ideas for B&Co's content calendar.
+
+${calSummary}
+${roomTarget}
+
+CAPACITY INPUTS:
+- Video pieces: ${videoCount} (Nigel / Sandy)
+- Static/Carousel pieces: ${staticCount} (Emily / Brandon)
+- Minimum Format Lift: ${flMin}
+- Funnel focus: ${funnel}
+${context ? `\nADDITIONAL CONTEXT: ${context}` : ''}
+
+Generate exactly ${parseInt(videoCount)+parseInt(staticCount)} content ideas as a JSON array. Each idea must be complete enough to run through the matrix.
+
+Return ONLY valid JSON array, no preamble:
+[
+  {
+    "idea": "Specific, executable content idea description — 2-3 sentences",
+    "room": "best-fit room from the 35",
+    "primary_lens": "lens name",
+    "format": "Reel/Short-form video OR Static post OR Carousel OR Long-form video",
+    "format_lift_estimate": "[1-4]",
+    "funnel_tier": "Top / Mid / Bottom / Internal",
+    "suggested_owner": "primary owner",
+    "difficulty_estimate": "[1-4]",
+    "why_now": "one sentence — why this room / idea is high priority right now",
+    "repurpose_potential": "one sentence — what derivative pieces come from this"
+  }
+]`;
+
+  try{
+    const response = await fetch("https://api.anthropic.com/v1/messages",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:2000,system:SYSTEM_PROMPT,messages:[{role:"user",content:userMsg}]})
+    });
+    const data = await response.json();
+    const raw = data.content.map(b=>b.text||"").join("");
+    let clean = raw.replace(/```json|```/g,"").trim();
+    const s=clean.indexOf('['), e=clean.lastIndexOf(']');
+    if(s!==-1&&e!==-1) clean=clean.substring(s,e+1);
+    const ideas = JSON.parse(clean);
+    renderGeneratedIdeas(ideas);
+  }catch(err){
+    document.getElementById('genResultsContent').innerHTML=`<div style="color:#D85A30;font-size:13px;padding:16px;">Generation failed.<br><small style="color:#7A7870">${err.message}</small></div>`;
+    document.getElementById('genResultsContent').style.display='block';
+  }
+  btn.disabled=false; btn.textContent='Generate idea slate'; bar.classList.remove('active');
+}
+
+function renderGeneratedIdeas(ideas){
+  const container = document.getElementById('genResultsContent');
+  const fl=FL_COLORS; const lc=LENS_COLORS;
+  let html = `<div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-3);margin-bottom:14px">${ideas.length} ideas generated</div><div class="gen-results">`;
+
+  ideas.forEach((idea, i)=>{
+    const flColor = fl[parseInt(idea.format_lift_estimate)||1];
+    const lens = LENS_COLORS[idea.primary_lens]||{bg:"#F1EFE8",text:"#444",dot:"#888"};
+    const diffColors = ["","#639922","#BA7517","#D85A30","#A32D2D"];
+    const diffColor = diffColors[parseInt(idea.difficulty_estimate)||1];
+    html += `<div class="gen-idea-card">
+      <div class="gen-idea-head" onclick="toggleGenIdea(${i})">
+        <span class="gen-idea-num">${String(i+1).padStart(2,'0')}</span>
+        <div style="flex:1">
+          <div class="gen-idea-title">${idea.idea.substring(0,120)}${idea.idea.length>120?'…':''}</div>
+          <div style="display:flex;gap:8px;margin-top:5px;flex-wrap:wrap;align-items:center">
+            <span class="tag" style="background:${lens.bg};color:${lens.text};font-size:10px">${(idea.primary_lens||'').split('/')[0].trim()}</span>
+            <span style="font-size:11px;color:var(--ink-3)">${idea.room||'—'}</span>
+          </div>
+        </div>
+        <div class="gen-idea-meta">
+          <div style="text-align:right">
+            <div style="font-family:var(--mono);font-size:14px;font-weight:600;color:${flColor}">FL ${idea.format_lift_estimate}/4</div>
+            <div style="font-size:10px;color:var(--ink-3)">${idea.format||'—'}</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:11px;font-weight:600;color:${diffColor}">D${idea.difficulty_estimate}</div>
+            <div style="font-size:10px;color:var(--ink-3)">${idea.suggested_owner||'—'}</div>
+          </div>
+        </div>
+      </div>
+      <div class="gen-idea-body" id="gen-idea-body-${i}">
+        <div style="font-size:13px;color:var(--ink-2);line-height:1.6;margin-bottom:10px">${idea.idea}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+          <div style="font-size:11px;color:var(--ink-3)"><strong style="color:var(--ink-2)">Why now:</strong> ${idea.why_now||'—'}</div>
+          <div style="font-size:11px;color:var(--ink-3)"><strong style="color:var(--ink-2)">Repurpose:</strong> ${idea.repurpose_potential||'—'}</div>
+        </div>
+        <div class="gen-actions">
+          <button class="gen-score-btn" onclick="scoreGeneratedIdea(${i})">Run full matrix score</button>
+          <button class="approve-btn" onclick="approveGeneratedIdea(${i}, '${idea.idea.replace(/'/g,"\\'")}', '${(idea.primary_lens||'').replace(/'/g,"\\'")}', '${(idea.room||'').replace(/'/g,"\\'")}', '${(idea.format||'').replace(/'/g,"\\'")}', ${parseInt(idea.format_lift_estimate)||1}, '${(idea.suggested_owner||'').replace(/'/g,"\\'")}', ${parseInt(idea.difficulty_estimate)||1}, '${(idea.funnel_tier||'').replace(/'/g,"\\'")}')">Approve to calendar</button>
+        </div>
+      </div>
+    </div>`;
+  });
+  html += `</div>`;
+  container.innerHTML = html;
+  container.style.display = 'block';
+  window._lastGeneratedIdeas = ideas;
+}
+
+function toggleGenIdea(i){
+  const body = document.getElementById('gen-idea-body-'+i);
+  if(body) body.classList.toggle('open');
+}
+
+function scoreGeneratedIdea(i){
+  const idea = window._lastGeneratedIdeas?.[i];
+  if(!idea) return;
+  setMode('score');
+  document.getElementById('ideaInput').value = idea.idea;
+  analyzeIdea();
+}
+
+function approveGeneratedIdea(i, idea, lens, room, format, fl, owner, diff, funnel){
+  calendarData.push({
+    title: idea.substring(0,100),
+    lens: lens,
+    conv_match: room,
+    format: format,
+    format_lift: fl,
+    status: 'Approved',
+    horizon: 'planned',
+    score: null,
+    funnel_tier: funnel,
+    audiences: [],
+    owner: owner,
+    difficulty: diff
+  });
+  const btn = document.querySelector(`#gen-idea-body-${i} .approve-btn`);
+  if(btn){ btn.textContent='✓ Added to calendar'; btn.disabled=true; btn.style.background='var(--teal-d)'; }
+  buildGenRoomGrid();
+}
+
+// ══════════════════════════════════════
+// RENDER SCORED RESULTS
+// ══════════════════════════════════════
+function renderResults(r){
+  const diffColors=["","#639922","#BA7517","#D85A30","#A32D2D"];
+  const diffColor=diffColors[r.production_difficulty]||"#888780";
+  const fl=parseInt(r.format_lift)||1;
+  const flColor=FL_COLORS[fl];
+
+  const lensScoreRows=Object.entries(r.lens_scores||{}).map(([lens,score])=>{
+    const c=LENS_COLORS[lens]||{dot:"#888780"};
+    const rat=(r.lens_score_rationale||{})[lens]||'';
+    return`<div class="score-row"><div class="score-meta"><span class="score-label">${lens}</span><span class="score-pct">${score}%</span></div><div class="score-track"><div class="score-fill" style="width:${score}%;background:${c.dot}"></div></div>${rat?`<div class="score-rationale">${rat}</div>`:''}</div>`;
+  }).join('');
+
+  const flPips=[1,2,3,4].map(i=>`<div class="fl-pip ${i<=fl?FL_CLASSES[fl]:''}"></div>`).join('');
+  const audTags=(r.audiences||[]).map(a=>{const ac=AUD_COLORS[a]||{bg:"#F1EFE8",text:"#444441"};return`<span class="tag" style="background:${ac.bg};color:${ac.text}">${a}</span>`;}).join('');
+  const secTags=(r.secondary_lenses||[]).map(l=>{const lc=LENS_COLORS[l]||{bg:"#F1EFE8",text:"#444441"};return`<span class="tag" style="background:${lc.bg};color:${lc.text}">${l}</span>`;}).join('');
+  const wfItems=(r.workflow_steps||[]).map((s,i)=>`<div class="wf-item"><div class="wf-num">${i+1}</div><div class="wf-text">${s}</div></div>`).join('');
+  const relTags=(r.related_threads||[]).map(t=>`<span class="tag" style="background:#F1EFE8;color:#5F5E5A;font-style:italic">${t}</span>`).join('');
+  const cf=r.content_formats||{};
+  const primaryFmt=cf.primary?`<span class="format-primary">${cf.primary}</span>`:'';
+  const secFmts=(cf.repurposing||[]).map(f=>`<span class="format-secondary">${f}</span>`).join('');
+  const me=r.monday_export||{};
+  const mondayFields=[
+    {k:"Item",v:me.item_name||r.monday_item},
+    {k:"Group (Lens)",v:me.group||r.primary_lens},
+    {k:"Assignee",v:(me.assignee_primary||r.suggested_owner||'')+(me.assignee_support?` + ${me.assignee_support}`:'')},
+    {k:"Status",v:me.status||"Approved"},
+    {k:"Difficulty",v:`${me.difficulty||r.production_difficulty} — ${r.difficulty_label}`},
+    {k:"Funnel",v:me.funnel_tier||r.funnel_tier},
+    {k:"Conversation",v:me.conversation||r.conv_match},
+    {k:"Format",v:me.format||cf.primary},
+    {k:"Format Lift",v:`${me.format_lift||fl}/4 — ${r.format_lift_label||''}`},
+    {k:"Due offset",v:`+${me.due_date_offset_days||'?'} days`},
+  ].map(f=>`<div class="monday-field"><div class="monday-key">${f.k}</div><div class="monday-val">${f.v||'—'}</div></div>`).join('');
+
+  const html=`
+    <div class="overall-score">
+      <div><div class="score-big-label">Matrix score</div><div class="score-big">${r.overall_score}<span style="font-size:20px;opacity:.5">%</span></div></div>
+      <div style="flex:1"><div class="score-verdict">${r.verdict}</div><div style="margin-top:6px;font-size:11px;color:rgba(255,255,255,.4)">Primary: ${r.primary_lens} · ${r.funnel_tier} funnel</div></div>
+      <div style="text-align:right;flex-shrink:0">
+        <div style="font-size:10px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">Format Lift</div>
+        <div style="font-family:var(--mono);font-size:22px;font-weight:500;color:${flColor}">${fl}/4</div>
+        <div style="font-size:10px;color:rgba(255,255,255,.4);margin-top:1px">${r.format_lift_label||''}</div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:8px;margin-bottom:14px">
+      <button class="approve-btn" style="flex:1;padding:10px" onclick="approveToCalendar()">✓ Approve to calendar</button>
+      <button class="copy-btn" style="padding:10px 16px;font-size:11px" onclick="copyMonday(this)">Copy Monday JSON</button>
+    </div>
+
+    <div class="result-card">
+      <div class="result-card-header"><span class="rct">Lens scores</span><span style="font-size:11px;color:var(--ink-3)">% fit + rationale</span></div>
+      <div class="result-card-body"><div class="score-grid">${lensScoreRows}</div></div>
+    </div>
+
+    <div class="result-card">
+      <div class="result-card-header"><span class="rct">Format Lift</span><span style="font-size:11px;font-weight:600;color:${flColor}">${r.format_lift_label||''}</span></div>
+      <div class="result-card-body">
+        <div class="fl-track">${flPips}</div>
+        <div class="fl-label">${fl}/4 — ${r.format_lift_label||''}</div>
+        <div class="fl-rationale">${r.format_lift_rationale||''}</div>
+      </div>
+    </div>
+
+    <div class="result-card">
+      <div class="result-card-header"><span class="rct">Conversation room</span></div>
+      <div class="result-card-body">
+        <div style="font-size:13px;font-weight:500;color:var(--ink);margin-bottom:4px">${r.conv_match||'—'}</div>
+        <div style="font-size:12px;color:var(--ink-3);line-height:1.5">${r.conv_match_rationale||''}</div>
+      </div>
+    </div>
+
+    <div class="result-card">
+      <div class="result-card-header"><span class="rct">Audiences served</span></div>
+      <div class="result-card-body">
+        <div class="tag-row">${audTags}</div>
+        ${secTags?`<div style="margin-top:8px"><div style="font-size:10px;color:var(--ink-3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Also touches</div><div class="tag-row">${secTags}</div></div>`:''}
+      </div>
+    </div>
+
+    <div class="result-card">
+      <div class="result-card-header"><span class="rct">Narrative thread</span></div>
+      <div class="result-card-body">
+        <div style="font-family:var(--serif);font-size:16px;color:var(--ink);margin-bottom:6px;font-style:italic">"${r.narrative_thread}"</div>
+        <div style="font-size:12px;color:var(--ink-3);line-height:1.5">${r.thread_rationale}</div>
+        ${relTags?`<div style="margin-top:10px"><div style="font-size:10px;color:var(--ink-3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Adjacent rooms</div><div class="tag-row">${relTags}</div></div>`:''}
+      </div>
+    </div>
+
+    <div class="result-card">
+      <div class="result-card-header"><span class="rct">Content formats + repurposing</span></div>
+      <div class="result-card-body">
+        <div class="format-grid">${primaryFmt}${secFmts}</div>
+        ${cf.repurposing_notes?`<div style="font-size:12px;color:var(--ink-2);line-height:1.6;margin-bottom:8px">${cf.repurposing_notes}</div>`:''}
+        ${cf.format_limitations?`<div style="font-size:11px;color:var(--ink-3);font-style:italic;border-top:1px solid var(--border);padding-top:8px;line-height:1.5">Ceiling: ${cf.format_limitations}</div>`:''}
+      </div>
+    </div>
+
+    <div class="result-card">
+      <div class="result-card-header">
+        <span class="rct">Production</span>
+        <span style="font-size:11px;font-weight:600;color:${diffColor}">${r.difficulty_label} · ${r.suggested_owner}${r.support_owner?` + ${r.support_owner}`:''}</span>
+      </div>
+      <div class="result-card-body">
+        <div style="font-size:12px;color:var(--ink-3);font-style:italic;margin-bottom:8px">${r.owner_rationale||''}</div>
+        <div style="font-size:12px;color:var(--ink-2);line-height:1.6;margin-bottom:12px">${r.production_notes}</div>
+        <div style="font-size:10px;color:var(--ink-3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px">Workflow</div>
+        <div class="wf-list">${wfItems}</div>
+      </div>
+    </div>
+
+    <div class="result-card">
+      <div class="result-card-header"><span class="rct">Monday export</span></div>
+      <div class="result-card-body">
+        <div class="monday-grid">${mondayFields}</div>
+        ${me.description_block?`<div class="monday-desc"><div class="monday-key" style="margin-bottom:6px">Description block</div><pre>${me.description_block}</pre></div>`:''}
+      </div>
+    </div>
+
+    <div class="result-card">
+      <div class="result-card-header"><span class="rct">Refinement suggestions</span></div>
+      <div class="result-card-body"><div style="font-size:13px;color:var(--ink-2);line-height:1.7">${r.refinement_suggestions}</div></div>
+    </div>
+
+    <div class="result-card">
+      <div class="result-card-header"><span class="rct">KPI focus</span></div>
+      <div class="result-card-body"><div style="font-size:13px;color:var(--ink-2);line-height:1.7">${r.kpi_focus}</div></div>
+    </div>
+
+    ${r.distribution_notes?`<div class="result-card"><div class="result-card-header"><span class="rct">Distribution notes</span></div><div class="result-card-body"><div style="font-size:12px;color:var(--ink-2);line-height:1.7">${r.distribution_notes}</div></div></div>`:''}
+    ${r.engagement_hooks?`<div class="result-card"><div class="result-card-header"><span class="rct">Engagement hooks</span></div><div class="result-card-body"><div style="font-size:12px;color:var(--ink-2);line-height:1.7">${r.engagement_hooks}</div></div></div>`:''}
+  `;
+
+  const container=document.getElementById('resultsContent');
+  container.innerHTML=html;
+  container.style.display='block';
+  window._lastResult=r;
+
+  setTimeout(()=>{
+    document.querySelectorAll('.score-fill').forEach(el=>{
+      const w=el.style.width; el.style.width='0%';
+      setTimeout(()=>{el.style.width=w;},50);
+    });
+  },100);
+}
+
+function copyMonday(btn){
+  if(!window._lastResult) return;
+  navigator.clipboard.writeText(JSON.stringify(window._lastResult.monday_export||{},null,2)).then(()=>{
+    btn.textContent='Copied!'; setTimeout(()=>{btn.textContent='Copy Monday JSON';},2000);
+  });
+}
+
+function approveToCalendar(){
+  const r = window._lastResult;
+  if(!r) return;
+  const existing = calendarData.find(d=>d.title===(r.monday_item||'Untitled'));
+  if(existing){
+    existing.status='Approved';
+  }
+  const btn = document.querySelector('.approve-btn');
+  if(btn){ btn.textContent='✓ On the calendar'; btn.disabled=true; btn.style.background='var(--teal-d)'; }
+  buildGenRoomGrid();
+}
+
+// ══════════════════════════════════════
+// SESSION LOG
+// ══════════════════════════════════════
+
+function addToSession(r, rawIdea){
+  sessionData.push({
+    id: sessionData.length+1,
+    idea: rawIdea.substring(0,120)+(rawIdea.length>120?'…':''),
+    timestamp: new Date(),
+    primary_lens: r.primary_lens,
+    overall_score: parseInt(r.overall_score)||0,
+    format_lift: parseInt(r.format_lift)||1,
+    format_lift_label: r.format_lift_label||'',
+    verdict: r.verdict||'',
+    conv_match: r.conv_match||'—',
+    narrative_thread: r.narrative_thread||'',
+    suggested_owner: r.suggested_owner||'',
+    support_owner: r.support_owner||null,
+    difficulty_label: r.difficulty_label||'',
+    refinement_suggestions: r.refinement_suggestions||'',
+    kpi_focus: r.kpi_focus||'',
+    monday_item: r.monday_item||'',
+    content_format: (r.content_formats&&r.content_formats.primary)||'',
+    funnel_tier: r.funnel_tier||'',
+    lens_scores: r.lens_scores||{},
+  });
+  updateSessionStats();
+}
+
+function updateSessionStats(){
+  document.getElementById('sessionCount').textContent=sessionData.length;
+  if(!sessionData.length) return;
+  const avg=Math.round(sessionData.reduce((s,d)=>s+d.overall_score,0)/sessionData.length);
+  const avgFL=(sessionData.reduce((s,d)=>s+d.format_lift,0)/sessionData.length).toFixed(1);
+  document.getElementById('sessionAvgScore').textContent=avg+'%';
+  document.getElementById('sessionAvgFL').textContent=avgFL+'/4';
+}
+
+function clearSession(){
+  if(!sessionData.length) return;
+  if(!confirm('Clear this session?')) return;
+  sessionData=[]; sessionStartTime=new Date();
+  updateSessionStats(); renderSession();
+}
+
+function toggleSessionEntry(id){
+  const body=document.getElementById('session-body-'+id);
+  if(body) body.classList.toggle('open');
+}
+
+function renderSession(){
+  updateSessionStats();
+  const empty=document.getElementById('sessionEmpty');
+  const feed=document.getElementById('sessionFeed');
+  if(!sessionData.length){ empty.style.display='block'; feed.innerHTML=''; return; }
+  empty.style.display='none';
+
+  feed.innerHTML=[...sessionData].reverse().map(entry=>{
+    const lc=LENS_COLORS[entry.primary_lens]||{bg:'#F1EFE8',text:'#444441',dot:'#888780'};
+    const flColor=FL_COLORS[entry.format_lift];
+    const ts=entry.timestamp.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+    const verdictColor=entry.verdict.startsWith('Green')?'#0F6E56':entry.verdict.startsWith('Park')?'#888780':'#BA7517';
+    const lensBarsMini=Object.entries(entry.lens_scores).map(([lens,score])=>{
+      const c=LENS_COLORS[lens]||{dot:'#888780'};
+      return`<div style="margin-bottom:6px"><div style="display:flex;justify-content:space-between;margin-bottom:2px"><span style="font-size:10px;color:var(--ink-3)">${lens.split('/')[0].trim()}</span><span style="font-family:var(--mono);font-size:10px;color:var(--ink-3)">${score}%</span></div><div style="height:4px;background:var(--paper-3);border-radius:2px;overflow:hidden"><div style="height:100%;width:${score}%;background:${c.dot};border-radius:2px"></div></div></div>`;
+    }).join('');
+    return`<div class="session-entry">
+      <div class="session-entry-head" onclick="toggleSessionEntry(${entry.id})">
+        <span class="session-entry-num">${entry.id}</span>
+        <div style="flex:1;min-width:0">
+          <div class="session-entry-title">${entry.idea}</div>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:4px;flex-wrap:wrap">
+            <span class="tag" style="background:${lc.bg};color:${lc.text};font-size:10px">${entry.primary_lens.split('/')[0].trim()}</span>
+            <span style="font-size:11px;color:var(--ink-3)">${entry.conv_match}</span>
+            <span style="font-size:11px;color:var(--ink-3)">· ${ts}</span>
+          </div>
+        </div>
+        <div class="session-entry-meta">
+          <div style="text-align:right"><div style="font-family:var(--mono);font-size:16px;font-weight:600;color:var(--ink)">${entry.overall_score}%</div><div style="font-size:10px;color:var(--ink-3)">matrix score</div></div>
+          <div style="text-align:right"><div style="font-family:var(--mono);font-size:16px;font-weight:600;color:${flColor}">${entry.format_lift}/4</div><div style="font-size:10px;color:var(--ink-3)">format lift</div></div>
+        </div>
+      </div>
+      <div class="session-entry-body" id="session-body-${entry.id}">
+        <div>
+          <div class="session-field-label">Verdict</div>
+          <div class="session-verdict" style="border-left-color:${verdictColor}">${entry.verdict}</div>
+          <div style="margin-top:10px"><div class="session-field-label" style="margin-bottom:6px">Lens scores</div>${lensBarsMini}</div>
+        </div>
+        <div>
+          <div class="session-field-label">Format Lift</div>
+          <div class="session-field" style="color:${flColor};font-weight:600">${entry.format_lift}/4 — ${entry.format_lift_label}</div>
+          <div style="margin-top:10px"><div class="session-field-label">Conversation room</div><div class="session-field">${entry.conv_match}</div></div>
+          <div style="margin-top:10px"><div class="session-field-label">Narrative thread</div><div class="session-field" style="font-style:italic">"${entry.narrative_thread}"</div></div>
+          <div style="margin-top:10px"><div class="session-field-label">Owner · Difficulty · Funnel</div><div class="session-field">${entry.suggested_owner}${entry.support_owner?' + '+entry.support_owner:''} · ${entry.difficulty_label} · ${entry.funnel_tier}</div></div>
+          <div style="margin-top:10px"><div class="session-field-label">Refinement</div><div class="session-field">${entry.refinement_suggestions}</div></div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════
+// CALENDAR DATA + RENDERING
+// ══════════════════════════════════════
+
+function addToCalendar(r, status='Scored'){
+  calendarData.push({
+    title: r.monday_item||'Untitled',
+    lens: r.primary_lens,
+    conv_match: r.conv_match||'—',
+    format: (r.content_formats&&r.content_formats.primary)||'Unknown',
+    format_lift: parseInt(r.format_lift)||1,
+    status: status,
+    horizon: 'active',
+    score: parseInt(r.overall_score)||0,
+    funnel_tier: r.funnel_tier||'',
+    audiences: r.audiences||[],
+    owner: r.suggested_owner||'—',
+    difficulty: parseInt(r.production_difficulty)||1,
+    repurposing: (r.content_formats&&r.content_formats.repurposing)||[],
+    repurposing_notes: (r.content_formats&&r.content_formats.repurposing_notes)||''
+  });
+}
+
+function getGapRooms(){
+  const covered = new Set(calendarData.map(d=>d.conv_match));
+  return ALL_ROOMS.filter(r=>!covered.has(r));
+}
+
+function getCalFiltered(){
+  if(currentHorizon==='all') return calendarData;
+  return calendarData.filter(d=>{
+    if(currentHorizon==='published') return d.status==='Published'||d.horizon==='published';
+    if(currentHorizon==='active') return ['Approved','In Production','Scored'].includes(d.status)||d.horizon==='active';
+    if(currentHorizon==='planned') return d.status==='Planned'||d.horizon==='planned';
+    return true;
+  });
+}
+
+function setHorizon(h, el){
+  currentHorizon=h;
+  document.querySelectorAll('.horizon-tab').forEach(t=>t.classList.remove('active'));
+  if(el) el.classList.add('active');
+  renderCalendar();
+}
+
+function renderCalendar(){
+  if(!calendarData.length){
+    document.getElementById('calEmpty').style.display='block';
+    document.getElementById('calContent').style.display='none';
+    return;
+  }
+  document.getElementById('calEmpty').style.display='none';
+  document.getElementById('calContent').style.display='block';
+
+  const data=getCalFiltered();
+  renderAggCards(data);
+  renderNutrition(data);
+  renderProductionLoad(data);
+  renderRoomHealth(data);
+  renderGaps(data);
+  renderTopo(data);
+  renderFormatValue(data);
+  renderRepurposeCard(data);
+  renderPieceLog(data);
+}
+
+function renderAggCards(data){
+  const total=data.length||1;
+  const avgScore=Math.round(data.reduce((s,d)=>s+(d.score||0),0)/total);
+  const avgFL=(data.reduce((s,d)=>s+(d.format_lift||1),0)/total).toFixed(1);
+  const hiFL=data.filter(d=>(d.format_lift||1)>=3).length;
+  const rooms=new Set(data.map(d=>d.conv_match).filter(c=>c&&c!=='—')).size;
+  document.getElementById('calAggCards').innerHTML=`
+    <div class="agg-card"><div class="agg-card-val">${total}</div><div class="agg-card-label">Total pieces</div><div class="agg-card-sub">in this view</div></div>
+    <div class="agg-card"><div class="agg-card-val" style="color:${avgFL>=3?'#0F6E56':avgFL>=2?'#BA7517':'#888780'}">${avgFL}</div><div class="agg-card-label">Avg Format Lift</div><div class="agg-card-sub">${hiFL} at FL 3–4</div></div>
+    <div class="agg-card"><div class="agg-card-val">${rooms}</div><div class="agg-card-label">Active rooms</div><div class="agg-card-sub">of 35 conversations</div></div>
+    <div class="agg-card"><div class="agg-card-val">${35-rooms}</div><div class="agg-card-label">Empty rooms</div><div class="agg-card-sub"><button class="gap-btn" onclick="setMode('generate');showPage('matrix',document.querySelector('.nav-tab'));toggleGapMode()">Fill gaps →</button></div></div>
+  `;
+}
+
+function renderNutrition(data){
+  const total=data.length||1;
+  const lensRows=LENSES.map(lens=>{
+    const n=data.filter(d=>d.lens===lens).length;
+    const pct=Math.round(n/total*100);
+    const lc=LENS_COLORS[lens]||{dot:'#888780'};
+    const targets={Knowledge:30,Relationships:25,"Process / Credibility":20,"Listing Exposure":15,"Agent Enablement":10};
+    const dv=targets[lens]||20;
+    const dvPct=Math.min(Math.round(pct/dv*100),999);
+    const isRoot=lens==='Relationships';
+    return`<div class="nutrition-row${isRoot?' thick':''}">
+      <div style="display:flex;align-items:center;gap:6px;flex:1">
+        <div style="width:8px;height:8px;border-radius:2px;background:${lc.dot};flex-shrink:0"></div>
+        <span class="nutrition-label-name${isRoot?' bold':''}">${lens.split('/')[0].trim()}</span>
+      </div>
+      <div class="nutrition-bar"><div class="nutrition-bar-fill" style="width:${pct}%;background:${lc.dot}"></div></div>
+      <span class="nutrition-val">${n}</span>
+      <span class="nutrition-dv">${pct}%</span>
+    </div>`;
+  }).join('');
+
+  const flRows=[4,3,2,1].map(fl=>{
+    const n=data.filter(d=>(d.format_lift||1)===fl).length;
+    const pct=Math.round(n/total*100);
+    return`<div class="nutrition-row indent">
+      <span class="nutrition-label-name">FL${fl} — ${FL_LABELS[fl]}</span>
+      <div class="nutrition-bar"><div class="nutrition-bar-fill" style="width:${pct}%;background:${FL_COLORS[fl]}"></div></div>
+      <span class="nutrition-val">${n}</span><span class="nutrition-dv">${pct}%</span>
+    </div>`;
+  }).join('');
+
+  const funnelRows=['Top','Mid','Bottom','Internal'].map(f=>{
+    const n=data.filter(d=>d.funnel_tier===f).length;
+    const pct=Math.round(n/total*100);
+    const colors={Top:'#D85A30',Mid:'#BA7517',Bottom:'#0F6E56',Internal:'#534AB7'};
+    return`<div class="nutrition-row indent">
+      <span class="nutrition-label-name">${f} funnel</span>
+      <div class="nutrition-bar"><div class="nutrition-bar-fill" style="width:${pct}%;background:${colors[f]||'#888780'}"></div></div>
+      <span class="nutrition-val">${n}</span><span class="nutrition-dv">${pct}%</span>
+    </div>`;
+  }).join('');
+
+  document.getElementById('nutritionLabel').innerHTML=`
+    <div class="nutrition-label-head"><div class="nutrition-label-title">Nutrition Facts</div><div class="nutrition-label-sub">Content diet analysis</div></div>
+    <div class="nutrition-label-servings">${total} piece${total!==1?'s':''} · ${currentHorizon==='all'?'All horizons':currentHorizon==='published'?'Published':currentHorizon==='active'?'Active this month':'Planned (next 60d)'}</div>
+    <div class="nutrition-main">
+      <div class="nutrition-row thick"><span class="nutrition-label-name bold">Lens coverage</span><span class="nutrition-val" style="color:var(--ink-3);font-size:10px;font-weight:400">count · share</span></div>
+      ${lensRows}
+      <div class="nutrition-row thick" style="margin-top:6px"><span class="nutrition-label-name bold">Format Lift quality</span></div>
+      ${flRows}
+      <div class="nutrition-row thick" style="margin-top:6px"><span class="nutrition-label-name bold">Funnel distribution</span></div>
+      ${funnelRows}
+    </div>
+    <div class="nutrition-footnote">* Relationships target: 20–30% as root value. FL 3–4 target: ≥40% of social content. Top funnel anchors brand awareness.</div>
+  `;
+
+  // Sidebar: audience
+  const audAll={};
+  data.forEach(d=>(d.audiences||[]).forEach(a=>{audAll[a]=(audAll[a]||0)+1;}));
+  const audMax=Math.max(...Object.values(audAll),1);
+  const audHTML=Object.entries(audAll).sort((a,b)=>b[1]-a[1]).map(([aud,n])=>{
+    const ac=AUD_COLORS[aud]||{bg:'#F1EFE8',text:'#444'};
+    return`<div style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px"><span class="tag" style="background:${ac.bg};color:${ac.text}">${aud}</span><span style="font-family:var(--mono);font-size:11px;color:var(--ink-3)">${n}</span></div><div style="height:5px;background:var(--paper-3);border-radius:3px;overflow:hidden"><div style="height:100%;width:${Math.round(n/audMax*100)}%;background:${ac.text};border-radius:3px;opacity:.6"></div></div></div>`;
+  }).join('');
+
+  document.getElementById('nutritionSidebar').innerHTML=`
+    <div style="background:white;border:1px solid var(--border);border-radius:10px;overflow:hidden">
+      <div style="padding:11px 16px;border-bottom:1px solid var(--border);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-3)">Audience composition</div>
+      <div style="padding:14px 16px">${audHTML||'<div style="font-size:12px;color:var(--ink-3);font-style:italic">No audience data</div>'}</div>
+    </div>
+  `;
+}
+
+function renderProductionLoad(data){
+  const owners=['Brandon','Emily','Nigel','Connor','Sandy','Claire','Agent-led'];
+  const ownerCounts={};
+  data.forEach(d=>{
+    const o=d.owner||'—';
+    ownerCounts[o]=(ownerCounts[o]||0)+1;
+  });
+  const max=Math.max(...Object.values(ownerCounts),1);
+  const rows=owners.filter(o=>ownerCounts[o]).map(o=>{
+    const count=ownerCounts[o]||0;
+    const color=OWNER_COLORS[o]||'#888780';
+    const pct=Math.round(count/max*100);
+    return`<div class="load-row">
+      <div class="load-owner">${o}</div>
+      <div class="load-bar-wrap"><div class="load-bar" style="width:${pct}%;background:${color}"></div></div>
+      <div class="load-count">${count} piece${count!==1?'s':''}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('loadBody').innerHTML=rows||'<div style="font-size:12px;color:var(--ink-3);font-style:italic">No data</div>';
+}
+
+function renderRoomHealth(data){
+  const rooms={};
+  data.forEach(d=>{if(d.conv_match&&d.conv_match!=='—')rooms[d.conv_match]=(rooms[d.conv_match]||0)+1;});
+  const sorted=Object.entries(rooms).sort((a,b)=>b[1]-a[1]);
+  const max=Math.max(...sorted.map(r=>r[1]),1);
+  document.getElementById('roomHealthGrid').innerHTML=sorted.slice(0,12).map(([room,count])=>`
+    <div class="room-health-item">
+      <div class="room-health-dot" style="background:var(--coral)"></div>
+      <div class="room-health-name">${room}</div>
+      <div class="room-health-bar"><div class="room-health-fill" style="width:${Math.round(count/max*100)}%"></div></div>
+      <div class="room-health-count">${count}</div>
+    </div>
+  `).join('')||'<div style="padding:16px;font-size:12px;color:var(--ink-3);font-style:italic">No data</div>';
+}
+
+function renderGaps(data){
+  const gaps=[];
+  const total=data.length;
+  LENSES.forEach(lens=>{
+    const count=data.filter(d=>d.lens===lens).length;
+    if(count===0) gaps.push(`No pieces under <strong>${lens}</strong> — this lens is dark in this view.`);
+  });
+  const lowFL=data.filter(d=>(d.format_lift||1)<=2).length;
+  if(total>3&&lowFL/total>0.6) gaps.push(`${Math.round(lowFL/total*100)}% of pieces score Format Lift 1–2. Most content is On the Nose or Light Hook. Ideate FL 3+ pieces.`);
+  const relCount=data.filter(d=>d.lens==="Relationships").length;
+  if(relCount/Math.max(total,1)<0.15&&total>4) gaps.push(`Relationships underrepresented (${relCount} of ${total} pieces). As the root value it should anchor a meaningful share.`);
+  const topCount=data.filter(d=>d.funnel_tier==='Top').length;
+  if(topCount/Math.max(total,1)<0.2&&total>4) gaps.push(`Only ${topCount} Top-funnel pieces (${Math.round(topCount/Math.max(total,1)*100)}%). Brand awareness content is underweighted.`);
+  const gapRooms=getGapRooms();
+  if(gapRooms.length>0) gaps.push(`${gapRooms.length} of 35 conversation rooms have no content. High-priority empty rooms: <em>${gapRooms.slice(0,4).join(', ')}${gapRooms.length>4?' and more':''}</em>.`);
+
+  document.getElementById('gapCard').innerHTML=gaps.length
+    ? gaps.map(g=>`<div class="gap-bar">${g}</div>`).join('')
+    : '<div style="font-size:12px;color:var(--ink-3);font-style:italic;padding:4px 0">No significant gaps detected in this view.</div>';
+}
+
+function renderTopo(data){
+  const lenses=["Knowledge","Relationships","Process / Credibility","Listing Exposure","Agent Enablement"];
+  const formats=["Reel/Short-form video","Static post","Carousel","Long-form video","Email/Newsletter","Other"];
+  const fmtColors=["#D85A30","#BA7517","#534AB7","#0F6E56","#185FA5","#888780"];
+  let html=`<div style="display:grid;grid-template-columns:repeat(5,1fr);">`;
+  lenses.forEach(lens=>{
+    const lc=LENS_COLORS[lens]||{dot:"#888780",bg:"#F1EFE8",text:"#444"};
+    html+=`<div style="border-right:1px solid var(--border);"><div style="padding:10px 14px;background:${lc.bg};border-bottom:1px solid var(--border);"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:${lc.text}">${lens.split('/')[0].trim()}</div></div>`;
+    const pieces=data.filter(d=>d.lens===lens);
+    const total=pieces.length;
+    if(!total){
+      html+=`<div style="padding:16px 14px;font-size:12px;color:var(--ink-3);font-style:italic">No pieces</div>`;
+    } else {
+      const byFormat={};
+      pieces.forEach(p=>{const f=formats.find(f=>p.format&&p.format.includes(f.split('/')[0]))||'Other';byFormat[f]=(byFormat[f]||0)+1;});
+      Object.entries(byFormat).sort((a,b)=>b[1]-a[1]).forEach(([fmt,count])=>{
+        const pct=Math.round(count/total*100);
+        const color=fmtColors[formats.indexOf(fmt)]||"#888780";
+        html+=`<div style="padding:7px 14px;border-bottom:1px solid var(--paper-3);display:flex;align-items:center;gap:8px;"><div style="flex:1;min-width:0"><div style="font-size:11px;color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${fmt.split('/')[0]}</div><div style="height:5px;background:var(--paper-3);border-radius:3px;margin-top:3px;overflow:hidden"><div style="height:100%;width:${pct}%;background:${color};border-radius:3px"></div></div></div><span style="font-family:var(--mono);font-size:12px;color:var(--ink-3);flex-shrink:0">${count}</span></div>`;
+      });
+      html+=`<div style="padding:8px 14px;background:var(--paper-2);font-size:11px;font-weight:600;color:var(--ink-3)">${total} piece${total!==1?'s':''}</div>`;
+    }
+    html+=`</div>`;
+  });
+  html+=`</div>`;
+  document.getElementById('topoChart').innerHTML=html;
+}
+
+function renderFormatValue(data){
+  const labels=["4 — Format is the idea","3 — Format doing work","2 — Light hook","1 — On the nose"];
+  const colors=["#534AB7","#0F6E56","#BA7517","#888780"];
+  const counts=[4,3,2,1].map(fl=>data.filter(d=>(d.format_lift||1)===fl).length);
+  const max=Math.max(...counts,1);
+  document.getElementById('formatValueChart').innerHTML=[0,1,2,3].map(i=>`
+    <div class="value-row">
+      <div class="value-label">${labels[i]}</div>
+      <div class="value-bar-wrap"><div class="value-bar" style="width:${Math.round(counts[i]/max*100)}%;background:${colors[i]}"></div></div>
+      <div class="value-count">${counts[i]}</div>
+    </div>`).join('')||'<div style="font-size:12px;color:var(--ink-3);font-style:italic;padding:8px 0">No data</div>';
+}
+
+function renderRepurposeCard(data){
+  const high=data.filter(d=>(d.repurposing||[]).length>=2||(d.format_lift||1)>=3);
+  const total=data.length;
+  if(!high.length){
+    document.getElementById('repurposeCard').innerHTML='<div style="font-size:12px;color:var(--ink-3);font-style:italic;padding:4px 0">Load calendar data to see repurposing opportunities.</div>';
+    return;
+  }
+  const rows=high.slice(0,6).map(p=>{
+    const deriv=(p.repurposing||[]).length||1;
+    return`<div style="margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--paper-3)">
+      <div style="font-size:12px;font-weight:500;color:var(--ink-2);margin-bottom:3px">${p.title}</div>
+      <div style="font-size:11px;color:var(--ink-3)">${deriv} derivative format${deriv!==1?'s':''} · FL ${p.format_lift||1}/4${p.repurposing_notes?` · ${p.repurposing_notes.substring(0,60)}…`:''}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('repurposeCard').innerHTML=`
+    <div style="font-size:11px;color:var(--ink-3);margin-bottom:12px">${high.length} of ${total} pieces have repurposing potential</div>
+    ${rows}
+  `;
+}
+
+function renderPieceLog(data){
+  document.getElementById('pieceCount').textContent=`${data.length} piece${data.length!==1?'s':''}`;
+  const rows=data.map((p,i)=>{
+    const lc=LENS_COLORS[p.lens]||{bg:"#F1EFE8",text:"#444"};
+    const sc=STATUS_COLORS[p.status]||{bg:"#E8E5DE",text:"#5F5E5A"};
+    const flColor=FL_COLORS[p.format_lift||1];
+    return`<div class="piece-row">
+      <div class="pc" style="color:var(--ink-3);font-family:var(--mono);font-size:10px">${i+1}</div>
+      <div class="pc" style="font-weight:500;color:var(--ink);font-size:12px">${p.title}</div>
+      <div class="pc" style="color:var(--ink-3);font-size:11px">${(p.conv_match||'—').substring(0,40)}</div>
+      <div class="pc"><span class="tag" style="background:${lc.bg};color:${lc.text};font-size:10px">${(p.lens||'').split('/')[0].trim()}</span></div>
+      <div class="pc" style="color:var(--ink-2);font-size:11px">${p.format||'—'}</div>
+      <div class="pc" style="font-family:var(--mono);font-size:12px;color:${flColor}">${p.format_lift||'—'}</div>
+      <div class="pc"><span class="piece-status" style="background:${sc.bg};color:${sc.text}">${p.status||'—'}</span></div>
+      <div class="pc" style="font-size:11px;color:var(--ink-2)">${p.owner||'—'}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('pieceLog').innerHTML=rows||'<div style="padding:20px;font-size:12px;color:var(--ink-3);font-style:italic">No pieces in this view.</div>';
+}
+
+// ══════════════════════════════════════
+// IMPORT
+// ══════════════════════════════════════
+function openImport(){document.getElementById('importModal').classList.add('open');}
+function closeImport(){document.getElementById('importModal').classList.remove('open');}
+function showImportSchema(){
+  const schema=`[{"title":"Sandy price-guess reel","lens":"Knowledge","conv_match":"What does buying or selling feel like right now?","format":"Reel/Short-form video","format_lift":4,"status":"Published","horizon":"published","owner":"Sandy","difficulty":3,"funnel_tier":"Top","audiences":["Brand awareness","Client attraction"]}]`;
+  const el=document.getElementById('importSchema');
+  el.textContent=schema;
+  el.style.display=el.style.display==='none'?'block':'none';
+}
+function processImport(){
+  const raw=document.getElementById('importText').value.trim();
+  if(!raw) return;
+  try{
+    const data=JSON.parse(raw);
+    if(!Array.isArray(data)) throw new Error('Expected an array');
+    data.forEach(item=>{
+      calendarData.push({
+        title:item.title||'Untitled',lens:item.lens||'Knowledge',
+        conv_match:item.conv_match||'—',format:item.format||'Unknown',
+        format_lift:parseInt(item.format_lift)||1,status:item.status||'Scored',
+        horizon:item.horizon||'active',score:parseInt(item.score)||0,
+        funnel_tier:item.funnel_tier||'',audiences:item.audiences||[],
+        owner:item.owner||'—',difficulty:parseInt(item.difficulty)||1,
+        repurposing:[],repurposing_notes:''
+      });
+    });
+    closeImport();
+    renderCalendar();
+    buildGenRoomGrid();
+  }catch(e){alert('Import failed: '+e.message);}
+}
+
+function loadCalSampleData(){
+  calendarData=[
+    // ── PUBLISHED ──
+    {title:"Burlington market conditions — Q1 honest read",lens:"Knowledge",conv_match:"What does buying or selling feel like right now?",format:"Reel/Short-form video",format_lift:2,status:"Published",horizon:"published",score:70,funnel_tier:"Top",audiences:["Brand awareness","Client attraction"],owner:"Brandon",difficulty:1,repurposing:["Static post","Email/Newsletter"],repurposing_notes:"Pull 2 stat callout graphics (Emily, 30min each). Use B-roll still for email header."},
+    {title:"Sandy's price-guess: 3 Burlington homes",lens:"Knowledge",conv_match:"What actually makes my home sell for more or less?",format:"Reel/Short-form video",format_lift:4,status:"Published",horizon:"published",score:91,funnel_tier:"Top",audiences:["Brand awareness","Client attraction"],owner:"Sandy",difficulty:3,repurposing:["Static post","Carousel"],repurposing_notes:"Each reveal moment = 1 standalone static (Emily, 20min each). 3-slide carousel: guess → reveal → key pricing insight."},
+    {title:"What really happens between contract and close",lens:"Process / Credibility",conv_match:"Why does process matter in a real estate deal?",format:"Carousel",format_lift:2,status:"Published",horizon:"published",score:74,funnel_tier:"Mid",audiences:["Client attraction"],owner:"Emily",difficulty:1,repurposing:["Static post"],repurposing_notes:"Final slide pulls as standalone post (Emily, 15min)."},
+    {title:"Meet Nigel — behind the camera at B&Co",lens:"Relationships",conv_match:"Who is B&Co and why does this firm exist?",format:"Reel/Short-form video",format_lift:3,status:"Published",horizon:"published",score:82,funnel_tier:"Top",audiences:["Brand awareness","Recruitment"],owner:"Nigel",difficulty:2,repurposing:["Static post"],repurposing_notes:"Pull BTS still for recruiting content block."},
+    {title:"417 Maple Ave — listing walkthrough",lens:"Listing Exposure",conv_match:"What kinds of listings are selling — and which aren't?",format:"Long-form video",format_lift:2,status:"Published",horizon:"published",score:76,funnel_tier:"Mid",audiences:["Client attraction"],owner:"Nigel",difficulty:3,repurposing:["Reel/Short-form video","Static post"],repurposing_notes:"30-sec hero cut for Reel (Nigel, 45min). Pull exterior hero shot for just-listed static (Emily, 20min)."},
+    {title:"Monthly agent brief — April what's working",lens:"Agent Enablement",conv_match:"What does this month's data mean for your client conversations?",format:"Internal brief",format_lift:1,status:"Published",horizon:"published",score:78,funnel_tier:"Internal",audiences:["Agent enablement"],owner:"Brandon",difficulty:1,repurposing:["Email/Newsletter"],repurposing_notes:"Top 3 tactics → agent email (Emily, 20min)."},
+    {title:"Can AI actually replace your real estate agent?",lens:"Process / Credibility",conv_match:"Can Zillow or AI actually do what an agent does?",format:"Reel/Short-form video",format_lift:3,status:"Published",horizon:"published",score:85,funnel_tier:"Top",audiences:["Brand awareness","Client attraction"],owner:"Brandon",difficulty:2,repurposing:["Carousel","Static post"],repurposing_notes:"5 things AI can't do = carousel (Emily, 1hr). Pull strongest point as static (Emily, 20min)."},
+    {title:"What Burlington's growth actually means for your home value",lens:"Knowledge",conv_match:"What does Burlington's growth mean for property values?",format:"Static post",format_lift:2,status:"Published",horizon:"published",score:68,funnel_tier:"Mid",audiences:["Client attraction","Brand awareness"],owner:"Emily",difficulty:1,repurposing:["Carousel"],repurposing_notes:"Expand data points to 4-slide carousel (Emily, 45min)."},
+    {title:"B&Co coffee & connections recap",lens:"Relationships",conv_match:"What is it actually like to work at B&Co day to day?",format:"Static post",format_lift:2,status:"Published",horizon:"published",score:72,funnel_tier:"Top",audiences:["Brand awareness","Recruitment"],owner:"Emily",difficulty:1,repurposing:[],repurposing_notes:"Standalone — no derivatives planned."},
+    {title:"Fixture vs. personal property — the sex swing edition",lens:"Process / Credibility",conv_match:"Why does process matter in a real estate deal?",format:"Reel/Short-form video",format_lift:3,status:"Published",horizon:"published",score:83,funnel_tier:"Mid",audiences:["Brand awareness","Client attraction"],owner:"Nigel",difficulty:2,repurposing:["Static post"],repurposing_notes:"Pull the reveal moment as a static with text overlay (Emily, 20min)."},
+
+    // ── ACTIVE THIS MONTH ──
+    {title:"The real cost of overpricing — what sellers don't see",lens:"Knowledge",conv_match:"What actually makes my home sell for more or less?",format:"Carousel",format_lift:2,status:"In Production",horizon:"active",score:74,funnel_tier:"Mid",audiences:["Client attraction"],owner:"Emily",difficulty:1,repurposing:["Static post","Email/Newsletter"],repurposing_notes:"Pull slide 3 (the data slide) as standalone (15min). Email: 3-line summary with link (20min)."},
+    {title:"Sandy debates: buyer vs. seller — same person",lens:"Relationships",conv_match:"What does buying or selling feel like right now?",format:"Reel/Short-form video",format_lift:4,status:"In Production",horizon:"active",score:89,funnel_tier:"Top",audiences:["Brand awareness","Client attraction"],owner:"Sandy",difficulty:3,repurposing:["Static post","Carousel"],repurposing_notes:"Each character side = 1 quote graphic (Emily, 20min each). 4-slide carousel: the core tension points."},
+    {title:"What a great agent actually does — day in the life",lens:"Process / Credibility",conv_match:"What does a real estate agent actually do?",format:"Reel/Short-form video",format_lift:3,status:"Approved",horizon:"active",score:82,funnel_tier:"Top",audiences:["Brand awareness","Client attraction","Recruitment"],owner:"Claire",difficulty:3,repurposing:["Carousel","Static post"],repurposing_notes:"Timeline moments = carousel (Emily, 1hr). Pull the 'client cried' moment as standalone (20min)."},
+    {title:"Is your agent BS-ing you? 5 real tells",lens:"Process / Credibility",conv_match:"How do I know if my agent is actually doing their job?",format:"Carousel",format_lift:3,status:"Approved",horizon:"active",score:86,funnel_tier:"Top",audiences:["Brand awareness","Client attraction"],owner:"Emily",difficulty:1,repurposing:["Reel/Short-form video","Static post"],repurposing_notes:"Record Brandon delivering tell #1 as a Reel hook (Nigel, 30min). Pull most viral slide as static."},
+    {title:"229 Oak Street — just listed",lens:"Listing Exposure",conv_match:"What kinds of listings are selling — and which aren't?",format:"Reel/Short-form video",format_lift:2,status:"In Production",horizon:"active",score:72,funnel_tier:"Mid",audiences:["Client attraction"],owner:"Nigel",difficulty:2,repurposing:["Static post"],repurposing_notes:"Hero exterior still for grid post (Emily, 15min)."},
+    {title:"How do I know when I'm actually ready to buy?",lens:"Knowledge",conv_match:"How do I maximize my experience as a first-timer?",format:"Carousel",format_lift:2,status:"Scored",horizon:"active",score:71,funnel_tier:"Top",audiences:["Brand awareness","Client attraction"],owner:"Emily",difficulty:1,repurposing:["Static post"],repurposing_notes:"Pull the 3-question readiness checklist as a standalone (Emily, 20min)."},
+
+    // ── PLANNED NEXT 60 DAYS ──
+    {title:"Why we have a real office in a remote-first world",lens:"Relationships",conv_match:"What is it actually like to work at B&Co day to day?",format:"Reel/Short-form video",format_lift:3,status:"Planned",horizon:"planned",score:84,funnel_tier:"Top",audiences:["Brand awareness","Recruitment"],owner:"Nigel",difficulty:2,repurposing:["Static post"],repurposing_notes:"Pull team moment still for recruiting block (Emily, 15min)."},
+    {title:"Sandy asks strangers: what does an agent actually do?",lens:"Process / Credibility",conv_match:"What does a real estate agent actually do?",format:"Reel/Short-form video",format_lift:4,status:"Planned",horizon:"planned",score:90,funnel_tier:"Top",audiences:["Brand awareness","Client attraction"],owner:"Sandy",difficulty:3,repurposing:["Carousel","Static post"],repurposing_notes:"Best answers = carousel (Emily, 1hr). Funniest wrong answer = standalone (20min)."},
+    {title:"What it actually costs to sell your home in NC",lens:"Process / Credibility",conv_match:"What does it actually cost to buy or sell? No fluff.",format:"Carousel",format_lift:2,status:"Planned",horizon:"planned",score:77,funnel_tier:"Mid",audiences:["Client attraction"],owner:"Emily",difficulty:1,repurposing:["Static post","Email/Newsletter"],repurposing_notes:"Line-item breakdown slide as static (15min). Email: the headline number with context (20min)."},
+    {title:"Local spotlight — best trails within 15 min of Burlington",lens:"Relationships",conv_match:"What is it actually like to live in Burlington?",format:"Reel/Short-form video",format_lift:3,status:"Planned",horizon:"planned",score:79,funnel_tier:"Top",audiences:["Brand awareness"],owner:"Nigel",difficulty:3,repurposing:["Carousel","Static post"],repurposing_notes:"Each trail = 1 slide carousel (Emily, 1hr). Pull hero shot of best trail as static (20min)."},
+    {title:"B&Co listing process — what we do that others skip",lens:"Process / Credibility",conv_match:"What does our listing presentation and onboarding look like?",format:"Long-form video",format_lift:2,status:"Planned",horizon:"planned",score:80,funnel_tier:"Mid",audiences:["Client attraction","Recruitment"],owner:"Nigel",difficulty:3,repurposing:["Carousel","Reel/Short-form video"],repurposing_notes:"Each process step = carousel slide (Emily, 1hr). Pull the 'standard everyone skips' moment as Reel (Nigel, 30min)."},
+    {title:"What makes a B&Co agent different — recruiting piece",lens:"Agent Enablement",conv_match:"What does the best version of a B&Co agent look like?",format:"Reel/Short-form video",format_lift:3,status:"Planned",horizon:"planned",score:81,funnel_tier:"Top",audiences:["Recruitment"],owner:"Brandon",difficulty:2,repurposing:["Static post"],repurposing_notes:"Pull the core values moment as a static graphic (Emily, 20min)."},
+    {title:"I backed out of a deal — here's what happened",lens:"Process / Credibility",conv_match:"What happens if I back out of a deal?",format:"Reel/Short-form video",format_lift:3,status:"Planned",horizon:"planned",score:84,funnel_tier:"Mid",audiences:["Client attraction"],owner:"Claire",difficulty:2,repurposing:["Carousel"],repurposing_notes:"The 4 outcomes of backing out = carousel (Emily, 45min)."},
+    {title:"I sold my home and had nowhere to go — what we did",lens:"Relationships",conv_match:"I sold my home and have nowhere to go — now what?",format:"Reel/Short-form video",format_lift:4,status:"Planned",horizon:"planned",score:87,funnel_tier:"Mid",audiences:["Client attraction","Brand awareness"],owner:"Sandy",difficulty:3,repurposing:["Static post","Carousel"],repurposing_notes:"The 3 options breakdown = carousel (Emily, 45min). The client relief moment = standalone (20min)."},
+    {title:"What actually makes your home sell for more",lens:"Knowledge",conv_match:"What actually makes my home sell for more or less?",format:"Carousel",format_lift:2,status:"Planned",horizon:"planned",score:73,funnel_tier:"Mid",audiences:["Client attraction"],owner:"Emily",difficulty:1,repurposing:["Static post"],repurposing_notes:"The #1 factor = standalone static (15min)."},
+    {title:"May agent skill brief — winning the pricing conversation",lens:"Agent Enablement",conv_match:"How do I sell my listings faster and at better prices?",format:"Internal brief",format_lift:1,status:"Planned",horizon:"planned",score:80,funnel_tier:"Internal",audiences:["Agent enablement"],owner:"Brandon",difficulty:1,repurposing:["Email/Newsletter"],repurposing_notes:"3 key talking points → agent email (Emily, 20min)."},
+    {title:"Neighborhoods to watch in Alamance County right now",lens:"Knowledge",conv_match:"What neighborhoods should I be paying attention to right now?",format:"Carousel",format_lift:2,status:"Planned",horizon:"planned",score:75,funnel_tier:"Mid",audiences:["Client attraction","Brand awareness"],owner:"Emily",difficulty:1,repurposing:["Static post"],repurposing_notes:"Top neighborhood pull as standalone (20min)."},
+  ];
+  renderCalendar();
+  buildGenRoomGrid();
+}
+</script>
+</body>
+</html>
