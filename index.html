@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>B&Co Content Matrix AI · v7</title>
+<title>B&Co Content Matrix AI · v8</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -300,15 +300,36 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);min-height
 
 /* Cal empty state */
 .cal-empty{text-align:center;padding:80px 20px;color:var(--ink-3);}
+
+/* ── API KEY BANNER ── */
+.key-banner{background:var(--ink);color:white;padding:10px 32px;display:flex;align-items:center;gap:14px;font-size:12px;flex-wrap:wrap;}
+.key-banner.active{background:#0F6E56;}
+.key-banner-label{font-weight:600;letter-spacing:.05em;text-transform:uppercase;font-size:10px;white-space:nowrap;opacity:.7;}
+.key-banner-input{flex:1;min-width:260px;max-width:420px;padding:6px 12px;font-family:var(--mono);font-size:12px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:6px;color:white;outline:none;letter-spacing:.04em;}
+.key-banner-input::placeholder{color:rgba(255,255,255,.35);}
+.key-banner-input:focus{border-color:rgba(255,255,255,.5);background:rgba(255,255,255,.15);}
+.key-banner-btn{padding:6px 16px;background:var(--coral);color:white;border:none;border-radius:6px;font-family:var(--sans);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;transition:background .15s;}
+.key-banner-btn:hover{background:var(--coral-d);}
+.key-banner-status{font-size:11px;opacity:.8;white-space:nowrap;}
+.key-banner-note{font-size:10px;opacity:.45;margin-left:auto;text-align:right;line-height:1.4;}
 </style>
 </head>
 <body>
+
+<!-- API KEY BANNER -->
+<div class="key-banner" id="keyBanner">
+  <span class="key-banner-label">API Key</span>
+  <input class="key-banner-input" id="keyInput" type="password" placeholder="Paste your Anthropic API key to activate the engine…" autocomplete="off" spellcheck="false"/>
+  <button class="key-banner-btn" onclick="saveKey()">Activate</button>
+  <span class="key-banner-status" id="keyStatus"></span>
+  <span class="key-banner-note">Key is held in memory only — never stored or sent anywhere except Anthropic's API.</span>
+</div>
 
 <nav class="nav">
   <div class="logo">
     <span class="logo-mark">B&Co</span>
     <span class="logo-sub">Content Matrix AI</span>
-    <span class="logo-v">v7</span>
+    <span class="logo-v">v8</span>
   </div>
   <div class="nav-tabs">
     <div class="nav-tab active" onclick="showPage('matrix',this)">Matrix</div>
@@ -617,6 +638,28 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);min-height
 
 <script>
 // ══════════════════════════════════════
+// API KEY
+// ══════════════════════════════════════
+let ANTHROPIC_API_KEY = '';
+
+function saveKey(){
+  const val = document.getElementById('keyInput').value.trim();
+  if(!val || !val.startsWith('sk-')){
+    document.getElementById('keyStatus').textContent = '⚠ Key should start with sk-';
+    return;
+  }
+  ANTHROPIC_API_KEY = val;
+  document.getElementById('keyInput').value = '';
+  document.getElementById('keyInput').placeholder = 'Key active — paste a new one to replace';
+  document.getElementById('keyStatus').textContent = '✓ Engine active';
+  document.getElementById('keyBanner').classList.add('active');
+}
+
+document.getElementById('keyInput').addEventListener('keydown', e => {
+  if(e.key === 'Enter') saveKey();
+});
+
+// ══════════════════════════════════════
 // CONSTANTS
 // ══════════════════════════════════════
 // ── STATE (declared first to avoid initialization errors) ──
@@ -921,10 +964,16 @@ async function analyzeIdea(){
 
 ${SCORE_SCHEMA}`;
 
+  if(!ANTHROPIC_API_KEY){
+    document.getElementById('resultsContent').innerHTML=`<div style="color:#D85A30;font-size:13px;padding:16px;">No API key set — paste your Anthropic key in the bar at the top and click Activate.</div>`;
+    document.getElementById('resultsContent').style.display='block';
+    btn.disabled=false; btn.textContent='Run through the matrix'; bar.classList.remove('active');
+    return;
+  }
   try{
     const response = await fetch("https://api.anthropic.com/v1/messages",{
       method:"POST",
-      headers:{"Content-Type":"application/json"},
+      headers:{"Content-Type":"application/json","x-api-key":ANTHROPIC_API_KEY,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
       body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:2000,system:SYSTEM_PROMPT,messages:[{role:"user",content:userMsg}]})
     });
     const data = await response.json();
@@ -1005,10 +1054,16 @@ Return ONLY valid JSON array, no preamble:
   }
 ]`;
 
+  if(!ANTHROPIC_API_KEY){
+    document.getElementById('genResultsContent').innerHTML=`<div style="color:#D85A30;font-size:13px;padding:16px;">No API key set — paste your Anthropic key in the bar at the top and click Activate.</div>`;
+    document.getElementById('genResultsContent').style.display='block';
+    btn.disabled=false; btn.textContent='Generate idea slate'; bar.classList.remove('active');
+    return;
+  }
   try{
     const response = await fetch("https://api.anthropic.com/v1/messages",{
       method:"POST",
-      headers:{"Content-Type":"application/json"},
+      headers:{"Content-Type":"application/json","x-api-key":ANTHROPIC_API_KEY,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
       body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:2000,system:SYSTEM_PROMPT,messages:[{role:"user",content:userMsg}]})
     });
     const data = await response.json();
