@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>B&Co Content Matrix AI · v8</title>
+<title>B&Co Content Matrix AI · v9</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -29,9 +29,10 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);min-height
 .logo-sub{font-size:11px;font-weight:500;color:var(--ink-3);letter-spacing:.08em;text-transform:uppercase;}
 .logo-v{font-size:10px;color:var(--ink-3);background:var(--paper-3);padding:2px 7px;border-radius:20px;font-weight:600;letter-spacing:.04em;align-self:center;}
 .nav-tabs{display:flex;gap:0;}
-.nav-tab{font-size:12px;font-weight:500;color:var(--ink-3);padding:20px 18px;cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;letter-spacing:.02em;white-space:nowrap;}
+.nav-tab{font-size:12px;font-weight:500;color:var(--ink-3);padding:20px 18px;cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;letter-spacing:.02em;white-space:nowrap;position:relative;}
 .nav-tab:hover{color:var(--ink);}
 .nav-tab.active{color:var(--coral);border-bottom-color:var(--coral);}
+.nav-badge{position:absolute;top:14px;right:10px;background:var(--coral);color:white;font-size:9px;font-weight:700;padding:1px 5px;border-radius:8px;min-width:16px;text-align:center;}
 .nav-kpi{font-size:11px;color:var(--ink-3);font-style:italic;max-width:280px;text-align:right;line-height:1.4;}
 
 /* PAGES */
@@ -53,7 +54,6 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);min-height
 .mode-tab:hover:not(.active){background:var(--paper-2);color:var(--ink);}
 
 /* Score mode */
-#scoreMode{}
 .idea-box{width:100%;min-height:110px;padding:16px;font-family:var(--sans);font-size:14px;color:var(--ink);background:white;border:1px solid var(--border);border-radius:8px;resize:vertical;outline:none;line-height:1.6;transition:border-color .2s;}
 .idea-box:focus{border-color:var(--coral);}
 .idea-box::placeholder{color:var(--ink-3);}
@@ -142,8 +142,6 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);min-height
 .monday-desc pre{font-size:11px;color:var(--ink-2);white-space:pre-wrap;line-height:1.5;font-family:var(--mono);}
 .copy-btn{font-size:10px;font-weight:600;padding:4px 10px;background:var(--ink);color:white;border:none;border-radius:6px;cursor:pointer;letter-spacing:.04em;transition:background .15s;}
 .copy-btn:hover{background:var(--ink-2);}
-
-/* Approve to calendar button */
 .approve-btn{font-size:11px;font-weight:600;padding:6px 14px;background:var(--teal);color:white;border:none;border-radius:6px;cursor:pointer;letter-spacing:.03em;transition:background .15s;}
 .approve-btn:hover{background:var(--teal-d);}
 .approve-btn:disabled{background:var(--paper-3);color:var(--ink-3);cursor:not-allowed;}
@@ -186,60 +184,115 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);min-height
 .session-clear-btn{font-size:11px;font-weight:600;padding:6px 14px;border-radius:6px;background:var(--paper-2);color:var(--ink-3);border:1px solid var(--border);cursor:pointer;transition:all .15s;}
 .session-clear-btn:hover{border-color:var(--coral);color:var(--coral);}
 
+/* ── WORKSHOP PAGE ── */
+.workshop-layout{display:grid;grid-template-columns:1fr 380px;min-height:calc(100vh - 57px);}
+.workshop-main{padding:36px 40px;border-right:1px solid var(--border);overflow-y:auto;}
+.workshop-heading{font-family:var(--serif);font-size:28px;color:var(--ink);line-height:1.2;margin-bottom:4px;}
+.workshop-sub{font-size:13px;color:var(--ink-3);line-height:1.5;margin-bottom:24px;}
+.workshop-toolbar{display:flex;gap:10px;align-items:center;margin-bottom:24px;flex-wrap:wrap;}
+.ws-btn{font-size:12px;font-weight:600;padding:9px 16px;background:var(--ink);color:white;border:none;border-radius:8px;cursor:pointer;transition:background .15s;}
+.ws-btn:hover{background:var(--ink-2);}
+.ws-btn.secondary{background:white;color:var(--ink);border:1px solid var(--border);}
+.ws-btn.secondary:hover{background:var(--paper-2);}
+.ws-btn.danger{background:white;color:#A32D2D;border:1px solid #EAC5C5;}
+.ws-btn.danger:hover{background:#FDF1F1;}
+.workshop-empty{text-align:center;padding:80px 20px;color:var(--ink-3);}
+
+/* Workshop idea cards */
+.ws-card{background:white;border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:14px;transition:box-shadow .15s;}
+.ws-card:hover{box-shadow:0 2px 12px rgba(0,0,0,.06);}
+.ws-card-head{padding:14px 16px;display:flex;align-items:flex-start;gap:12px;}
+.ws-card-drag{color:var(--paper-3);font-size:14px;cursor:grab;padding-top:2px;flex-shrink:0;}
+.ws-card-body-wrap{flex:1;min-width:0;}
+.ws-card-title{font-size:13px;font-weight:500;color:var(--ink);line-height:1.4;margin-bottom:6px;}
+.ws-card-title-input{width:100%;font-size:13px;font-weight:500;color:var(--ink);font-family:var(--sans);border:1px solid var(--coral);border-radius:4px;padding:4px 8px;outline:none;line-height:1.4;}
+.ws-card-meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+.ws-status-badge{font-size:10px;font-weight:600;padding:2px 9px;border-radius:20px;cursor:pointer;letter-spacing:.04em;border:none;font-family:var(--sans);}
+.ws-card-actions{display:flex;gap:6px;flex-shrink:0;align-items:flex-start;}
+.ws-action-btn{font-size:10px;font-weight:600;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:white;color:var(--ink-3);cursor:pointer;transition:all .15s;white-space:nowrap;}
+.ws-action-btn:hover{border-color:var(--ink);color:var(--ink);}
+.ws-action-btn.promote{border-color:var(--teal);color:var(--teal);}
+.ws-action-btn.promote:hover{background:var(--teal);color:white;}
+.ws-action-btn.delete{border-color:transparent;color:var(--ink-3);}
+.ws-action-btn.delete:hover{border-color:#EAC5C5;color:#A32D2D;}
+.ws-notes-area{border-top:1px solid var(--paper-3);padding:10px 16px 14px;}
+.ws-notes-input{width:100%;font-size:12px;color:var(--ink-2);font-family:var(--sans);border:none;background:transparent;outline:none;resize:none;line-height:1.6;min-height:44px;}
+.ws-notes-input::placeholder{color:var(--ink-3);font-style:italic;}
+.ws-notes-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-3);margin-bottom:4px;}
+
+/* Workshop sidebar — live nutrition facts */
+.workshop-sidebar{background:var(--paper-2);border-left:1px solid var(--border);overflow-y:auto;}
+.ws-sidebar-header{padding:20px 24px;border-bottom:1px solid var(--border);background:var(--paper);}
+.ws-sidebar-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-3);margin-bottom:2px;}
+.ws-sidebar-count{font-family:var(--mono);font-size:22px;font-weight:500;color:var(--ink);}
+.ws-sidebar-sub{font-size:11px;color:var(--ink-3);margin-top:1px;}
+.ws-sidebar-body{padding:20px 24px;}
+
+/* ── NUTRITION FACTS — shared ── */
+.nutrition-label-card{background:white;border:2px solid var(--ink);border-radius:10px;overflow:hidden;}
+.nutrition-label-head{padding:10px 16px;border-bottom:3px solid var(--ink);}
+.nutrition-label-title{font-family:var(--serif);font-size:22px;color:var(--ink);line-height:1.1;}
+.nutrition-label-sub{font-size:11px;color:var(--ink-3);margin-top:2px;}
+.nutrition-label-servings{padding:6px 16px;border-bottom:8px solid var(--ink);font-size:11px;color:var(--ink-2);}
+.nutrition-main{padding:0 16px;}
+.nutrition-section-head{padding:6px 0;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-3);border-bottom:4px solid var(--ink);margin-top:6px;}
+.nutrition-row{display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid var(--border);font-size:12px;}
+.nutrition-row:last-child{border-bottom:none;}
+.nutrition-row.indent{padding-left:12px;}
+.nutrition-row.thick{border-bottom:3px solid var(--ink);}
+.nutrition-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0;}
+.nutrition-label-name{color:var(--ink-2);flex:1;}
+.nutrition-label-name.bold{font-weight:600;color:var(--ink);}
+.nutrition-bar{flex:2;height:6px;background:var(--paper-3);border-radius:3px;overflow:hidden;}
+.nutrition-bar-fill{height:100%;border-radius:3px;transition:width .6s ease;}
+.nutrition-val{font-family:var(--mono);font-size:11px;color:var(--ink);font-weight:600;min-width:22px;text-align:right;}
+.nutrition-dv{font-size:10px;color:var(--ink-3);min-width:28px;text-align:right;}
+.nutrition-footnote{padding:8px 16px;font-size:10px;color:var(--ink-3);line-height:1.5;border-top:1px solid var(--border);}
+
+/* Target vs actual indicators */
+.nutrition-target-ok{color:var(--teal);}
+.nutrition-target-warn{color:var(--amber);}
+.nutrition-target-gap{color:var(--coral);}
+.nutrition-health-bar{display:flex;gap:3px;margin-bottom:16px;}
+.nutrition-health-seg{height:6px;border-radius:3px;flex:1;}
+
+/* Stacked bar viz */
+.stack-bar-wrap{height:20px;border-radius:4px;overflow:hidden;display:flex;margin-bottom:14px;}
+.stack-seg{height:100%;transition:flex .6s ease;}
+
 /* ── CALENDAR PAGE ── */
 .cal-layout{padding:36px 40px;max-width:1400px;margin:0 auto;}
 .cal-header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:28px;}
 .cal-heading{font-family:var(--serif);font-size:28px;color:var(--ink);line-height:1.2;margin-bottom:4px;}
 .cal-sub{font-size:13px;color:var(--ink-3);line-height:1.5;}
-.cal-actions{display:flex;gap:10px;align-items:center;}
+.cal-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
 .cal-btn{font-size:12px;font-weight:600;padding:9px 16px;background:var(--ink);color:white;border:none;border-radius:8px;cursor:pointer;transition:background .15s;}
 .cal-btn:hover{background:var(--ink-2);}
 .cal-btn.secondary{background:white;color:var(--ink);border:1px solid var(--border);}
 .cal-btn.secondary:hover{background:var(--paper-2);}
-
 .horizon-tabs{display:flex;gap:0;border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:24px;width:fit-content;}
 .horizon-tab{font-size:12px;font-weight:500;padding:8px 18px;cursor:pointer;background:white;color:var(--ink-3);border-right:1px solid var(--border);transition:all .15s;}
 .horizon-tab:last-child{border-right:none;}
 .horizon-tab.active{background:var(--ink);color:white;}
 .horizon-tab:hover:not(.active){background:var(--paper-2);color:var(--ink);}
 
-/* Nutrition label */
-.nutrition-section{margin-bottom:28px;}
-.nutrition-label-card{background:white;border:2px solid var(--ink);border-radius:10px;overflow:hidden;max-width:480px;}
-.nutrition-label-head{padding:10px 16px;border-bottom:3px solid var(--ink);}
-.nutrition-label-title{font-family:var(--serif);font-size:22px;color:var(--ink);line-height:1.1;}
-.nutrition-label-sub{font-size:11px;color:var(--ink-3);margin-top:2px;}
-.nutrition-label-servings{padding:6px 16px;border-bottom:8px solid var(--ink);font-size:11px;color:var(--ink-2);}
-.nutrition-main{padding:0 16px;}
-.nutrition-row{display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);font-size:12px;}
-.nutrition-row:last-child{border-bottom:none;}
-.nutrition-row.thick{border-bottom:4px solid var(--ink);padding-bottom:6px;}
-.nutrition-row.indent{padding-left:16px;}
-.nutrition-label-name{color:var(--ink-2);}
-.nutrition-label-name.bold{font-weight:600;color:var(--ink);}
-.nutrition-val{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:600;}
-.nutrition-bar{flex:1;height:6px;background:var(--paper-3);border-radius:3px;overflow:hidden;margin:0 10px;}
-.nutrition-bar-fill{height:100%;border-radius:3px;}
-.nutrition-dv{font-size:10px;color:var(--ink-3);min-width:32px;text-align:right;}
-.nutrition-footnote{padding:8px 16px;font-size:10px;color:var(--ink-3);line-height:1.5;border-top:1px solid var(--border);}
-
 /* Aggregate cards */
-.agg-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+.agg-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;}
 .agg-card{background:white;border:1px solid var(--border);border-radius:10px;padding:16px;}
 .agg-card-val{font-family:var(--serif);font-size:32px;color:var(--ink);line-height:1;}
 .agg-card-label{font-size:11px;color:var(--ink-3);margin-top:4px;line-height:1.4;}
 .agg-card-sub{font-size:10px;color:var(--ink-3);font-style:italic;margin-top:3px;}
 
-/* Room health */
-.room-health-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:28px;}
-.room-health-item{background:white;border:1px solid var(--border);border-radius:8px;padding:11px 14px;display:flex;align-items:center;gap:10px;}
-.room-health-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
-.room-health-name{font-size:12px;color:var(--ink-2);flex:1;line-height:1.3;}
-.room-health-count{font-family:var(--mono);font-size:11px;color:var(--ink-3);}
-.room-health-bar{width:60px;height:5px;background:var(--paper-3);border-radius:3px;overflow:hidden;}
-.room-health-fill{height:100%;border-radius:3px;background:var(--coral);}
+/* Calendar two-col layout */
+.cal-body{display:grid;grid-template-columns:1fr 360px;gap:24px;align-items:start;}
+.cal-main-col{}
+.cal-side-col{}
 
-/* Coverage grid */
+/* Nutrition section in calendar */
+.nutrition-section{margin-bottom:28px;}
+.topo-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-3);margin-bottom:12px;}
+
+/* Room health */
 .coverage-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:28px;}
 .coverage-card{background:white;border:1px solid var(--border);border-radius:10px;overflow:hidden;}
 .coverage-card-head{padding:11px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
@@ -251,29 +304,13 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);min-height
 .value-bar-wrap{height:8px;background:var(--paper-3);border-radius:4px;overflow:hidden;}
 .value-bar{height:100%;border-radius:4px;}
 .value-count{font-family:var(--mono);font-size:11px;color:var(--ink-3);text-align:right;}
-
-/* Gap bars */
 .gap-bar{display:flex;align-items:flex-start;gap:10px;padding:8px 12px;background:var(--coral-l);border-radius:6px;margin-bottom:6px;font-size:12px;color:var(--coral-d);line-height:1.5;}
 .gap-bar::before{content:"⚑";flex-shrink:0;margin-top:1px;}
 .gap-btn{display:inline-block;margin-top:6px;font-size:11px;font-weight:600;padding:4px 10px;background:var(--coral);color:white;border:none;border-radius:5px;cursor:pointer;transition:background .15s;}
 .gap-btn:hover{background:var(--coral-d);}
 
-/* Piece log */
-.piece-log{background:white;border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:28px;}
-.piece-log-head{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
-.piece-log-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-3);}
-.piece-row{display:grid;grid-template-columns:28px 1fr 110px 80px 70px 60px 80px 90px;font-size:12px;border-bottom:1px solid var(--border);align-items:center;}
-.piece-row:last-child{border-bottom:none;}
-.piece-row.header{background:var(--paper-3);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-3);}
-.pc{padding:9px 10px;border-right:1px solid var(--border);}
-.pc:last-child{border-right:none;}
-.piece-status{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;letter-spacing:.04em;white-space:nowrap;}
-.piece-promote-btn{font-size:10px;font-weight:600;padding:3px 8px;background:var(--teal-l);color:var(--teal-d);border:1px solid var(--teal);border-radius:4px;cursor:pointer;transition:all .15s;white-space:nowrap;}
-.piece-promote-btn:hover{background:var(--teal);color:white;}
-
 /* Topography */
 .topo-section{margin-bottom:28px;}
-.topo-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-3);margin-bottom:12px;}
 .topo-chart{background:white;border:1px solid var(--border);border-radius:10px;overflow:hidden;}
 
 /* Production load bars */
@@ -288,20 +325,44 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);min-height
 .load-bar{height:100%;border-radius:6px;transition:width .8s ease;}
 .load-count{font-family:var(--mono);font-size:11px;color:var(--ink-3);min-width:50px;text-align:right;}
 
-/* Import modal */
-.import-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;align-items:center;justify-content:center;}
-.import-modal.open{display:flex;}
-.import-box{background:white;border-radius:12px;padding:28px;width:560px;max-height:80vh;overflow-y:auto;}
-.import-title{font-family:var(--serif);font-size:20px;margin-bottom:8px;}
-.import-desc{font-size:13px;color:var(--ink-3);margin-bottom:16px;line-height:1.5;}
-.import-textarea{width:100%;height:180px;padding:12px;font-family:var(--mono);font-size:11px;color:var(--ink);background:var(--paper-2);border:1px solid var(--border);border-radius:8px;resize:vertical;outline:none;line-height:1.5;}
-.import-textarea:focus{border-color:var(--coral);}
-.import-actions{display:flex;gap:8px;margin-top:12px;}
+/* Piece log */
+.piece-log{background:white;border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:28px;}
+.piece-log-head{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.piece-log-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-3);}
+.piece-row{display:grid;grid-template-columns:28px 1fr 110px 80px 70px 60px 80px 90px 56px;font-size:12px;border-bottom:1px solid var(--border);align-items:center;}
+.piece-row:last-child{border-bottom:none;}
+.piece-row.header{background:var(--paper-3);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-3);}
+.pc{padding:9px 10px;border-right:1px solid var(--border);}
+.pc:last-child{border-right:none;}
+.piece-status{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;letter-spacing:.04em;white-space:nowrap;}
+.piece-delete-btn{font-size:10px;color:var(--ink-3);background:none;border:none;cursor:pointer;padding:2px 4px;border-radius:4px;transition:all .15s;}
+.piece-delete-btn:hover{color:#A32D2D;background:#FDF1F1;}
+
+/* Room health grid */
+.room-health-item{background:white;border:1px solid var(--border);border-radius:8px;padding:11px 14px;display:flex;align-items:center;gap:10px;}
+.room-health-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.room-health-name{font-size:12px;color:var(--ink-2);flex:1;line-height:1.3;}
+.room-health-count{font-family:var(--mono);font-size:11px;color:var(--ink-3);}
+.room-health-bar{width:60px;height:5px;background:var(--paper-3);border-radius:3px;overflow:hidden;}
+.room-health-fill{height:100%;border-radius:3px;background:var(--coral);}
 
 /* Cal empty state */
 .cal-empty{text-align:center;padding:80px 20px;color:var(--ink-3);}
 
-/* ── API KEY BANNER ── */
+/* Import / Export modal */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal-box{background:white;border-radius:12px;padding:28px;width:580px;max-height:82vh;overflow-y:auto;}
+.modal-title{font-family:var(--serif);font-size:20px;margin-bottom:8px;}
+.modal-desc{font-size:13px;color:var(--ink-3);margin-bottom:16px;line-height:1.5;}
+.modal-textarea{width:100%;height:200px;padding:12px;font-family:var(--mono);font-size:11px;color:var(--ink);background:var(--paper-2);border:1px solid var(--border);border-radius:8px;resize:vertical;outline:none;line-height:1.5;}
+.modal-textarea:focus{border-color:var(--coral);}
+.modal-actions{display:flex;gap:8px;margin-top:14px;}
+
+/* Persist indicator */
+.persist-dot{width:6px;height:6px;border-radius:50%;background:var(--teal);display:inline-block;margin-right:5px;}
+
+/* API KEY BANNER */
 .key-banner{background:var(--ink);color:white;padding:10px 32px;display:flex;align-items:center;gap:14px;font-size:12px;flex-wrap:wrap;}
 .key-banner.active{background:#0F6E56;}
 .key-banner-label{font-weight:600;letter-spacing:.05em;text-transform:uppercase;font-size:10px;white-space:nowrap;opacity:.7;}
@@ -329,12 +390,13 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);min-height
   <div class="logo">
     <span class="logo-mark">B&Co</span>
     <span class="logo-sub">Content Matrix AI</span>
-    <span class="logo-v">v8</span>
+    <span class="logo-v">v9</span>
   </div>
   <div class="nav-tabs">
     <div class="nav-tab active" onclick="showPage('matrix',this)">Matrix</div>
     <div class="nav-tab" onclick="showPage('session',this)">Session Log</div>
-    <div class="nav-tab" onclick="showPage('calendar',this)">Calendar</div>
+    <div class="nav-tab" onclick="showPage('workshop',this)">Workshop <span class="nav-badge" id="workshopBadge" style="display:none">0</span></div>
+    <div class="nav-tab" onclick="showPage('calendar',this)">Calendar <span class="nav-badge" id="calBadge" style="display:none">0</span></div>
   </div>
   <div class="nav-kpi">Success = local Triad engagement that generates inbound interest or deepens relationships.</div>
 </nav>
@@ -410,15 +472,12 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);min-height
     <div id="generateMode">
       <div class="gen-section">
         <div class="gen-label">Target rooms <span style="font-weight:400;text-transform:none;font-style:italic;color:var(--ink-3)">(pick 1–3, or use gap fill)</span></div>
-        <div class="gen-room-grid" id="genRoomGrid">
-          <!-- populated by JS -->
-        </div>
+        <div class="gen-room-grid" id="genRoomGrid"></div>
         <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
           <button class="gen-gap-btn" id="genGapBtn" onclick="toggleGapMode()">⚑ Fill calendar gaps automatically</button>
           <button class="gen-gap-btn" onclick="clearGenRooms()">Clear selection</button>
         </div>
       </div>
-
       <div class="gen-section">
         <div class="gen-label">Production capacity this period</div>
         <div class="gen-row">
@@ -450,13 +509,11 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);min-height
           </select>
         </div>
       </div>
-
       <div class="gen-section">
         <div class="gen-label">Context for ideation <span style="font-weight:400;text-transform:none;font-style:italic;color:var(--ink-3)">(optional)</span></div>
-        <textarea class="idea-box" id="genContext" style="min-height:70px" placeholder="e.g. We have no content for the money anxiety rooms. Sandy is available this month. We want something that can work on its own AND generate carousel derivatives."></textarea>
+        <textarea class="idea-box" id="genContext" style="min-height:70px" placeholder="e.g. We have no content for the money anxiety rooms. Sandy is available this month."></textarea>
       </div>
-
-      <div class="gen-note">The engine will generate a scored slate of ideas matched to your inputs. Each idea can be run through full scoring or approved directly to the calendar.</div>
+      <div class="gen-note">The engine will generate a scored slate of ideas. Each idea can be run through full scoring or sent to the Workshop.</div>
       <button class="analyze-btn" id="generateBtn" onclick="generateIdeas()">Generate idea slate</button>
       <div class="loading-bar" id="genLoadingBar"><div class="loading-fill"></div></div>
     </div>
@@ -491,7 +548,7 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);min-height
   <div class="session-header">
     <div>
       <div class="session-heading">Session Log</div>
-      <div class="session-sub">Every idea scored this session — in order.</div>
+      <div class="session-sub">Every idea scored this session — in order. Resets when you close the tab.</div>
     </div>
     <div class="session-stats">
       <div class="session-stat"><div class="session-stat-val" id="sessionCount">0</div><div class="session-stat-label">Ideas scored</div></div>
@@ -508,17 +565,59 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);min-height
 </div>
 </div>
 
+<!-- ══════════ WORKSHOP PAGE ══════════ -->
+<div class="page" id="page-workshop">
+<div class="workshop-layout">
+
+  <!-- Main column -->
+  <div class="workshop-main">
+    <div class="eyebrow"><span class="persist-dot"></span>Persisted across sessions</div>
+    <div class="workshop-heading">Workshop</div>
+    <p class="workshop-sub">Stage and refine ideas before committing them to the calendar. Add notes, change status, promote when ready.</p>
+
+    <div class="workshop-toolbar">
+      <button class="ws-btn" onclick="openAddIdea()">+ Add idea manually</button>
+      <button class="ws-btn secondary" onclick="openExportWorkshop()">Export JSON</button>
+      <button class="ws-btn secondary" onclick="openImportWorkshop()">Import JSON</button>
+      <button class="ws-btn danger" onclick="clearWorkshop()">Clear all</button>
+    </div>
+
+    <div id="workshopEmpty" class="workshop-empty">
+      <div style="font-family:var(--serif);font-size:40px;color:var(--paper-3);margin-bottom:12px;">&#x270E;</div>
+      <div style="font-size:13px;line-height:1.6;max-width:320px;margin:0 auto;">No ideas in the workshop yet. Score or generate ideas in the Matrix and send them here — or add one manually above.</div>
+    </div>
+
+    <div id="workshopFeed"></div>
+  </div>
+
+  <!-- Sidebar: live nutrition facts -->
+  <div class="workshop-sidebar">
+    <div class="ws-sidebar-header">
+      <div class="ws-sidebar-title">Live nutrition facts</div>
+      <div class="ws-sidebar-count" id="wsNutritionCount">0 ideas</div>
+      <div class="ws-sidebar-sub">Updates as you add or remove pieces</div>
+    </div>
+    <div class="ws-sidebar-body">
+      <div id="wsNutritionPanel"><div style="font-size:12px;color:var(--ink-3);font-style:italic;padding:8px 0;">Add ideas to see your content diet.</div></div>
+    </div>
+  </div>
+
+</div>
+</div>
+
 <!-- ══════════ CALENDAR PAGE ══════════ -->
 <div class="page" id="page-calendar">
 <div class="cal-layout">
   <div class="cal-header">
     <div>
-      <div class="cal-heading">Content Calendar</div>
-      <div class="cal-sub">Production schedule, nutrition facts, room health, and gap-driven ideation feedback loop.</div>
+      <div class="eyebrow"><span class="persist-dot"></span>Persisted across sessions</div>
+      <div class="cal-heading">Calendar</div>
+      <div class="cal-sub">Committed pieces with dates. Nutrition facts, room health, and gap analysis update as you build.</div>
     </div>
     <div class="cal-actions">
       <button class="cal-btn secondary" onclick="loadCalSampleData()">Load sample data</button>
-      <button class="cal-btn secondary" onclick="openImport()">Import from Monday / Later</button>
+      <button class="cal-btn secondary" onclick="openExportCal()">Export JSON</button>
+      <button class="cal-btn secondary" onclick="openImportCal()">Import JSON</button>
     </div>
   </div>
 
@@ -531,107 +630,189 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);min-height
 
   <div id="calEmpty" class="cal-empty">
     <div style="font-family:var(--serif);font-size:40px;color:var(--paper-3);margin-bottom:12px;">&#x25A4;</div>
-    <div style="font-size:13px;line-height:1.6;max-width:360px;margin:0 auto;">Import content from Monday.com or Later.com — or load sample data. Approved ideas from the Matrix flow here automatically.</div>
+    <div style="font-size:13px;line-height:1.6;max-width:360px;margin:0 auto;">Promote ideas from the Workshop, import from Monday / Later, or load sample data. Approved pieces show up here.</div>
   </div>
 
   <div id="calContent" style="display:none">
-
-    <!-- AGGREGATE CARDS -->
     <div class="agg-cards" id="calAggCards"></div>
 
-    <!-- NUTRITION + SIDEBAR -->
-    <div class="nutrition-section">
-      <div class="topo-label" style="margin-bottom:14px;">Content nutrition facts — what this period is made of</div>
-      <div style="display:grid;grid-template-columns:480px 1fr;gap:24px;align-items:start;">
-        <div class="nutrition-label-card" id="nutritionLabel"></div>
-        <div id="nutritionSidebar"></div>
-      </div>
-    </div>
-
-    <!-- PRODUCTION LOAD -->
-    <div class="load-card">
-      <div class="load-head">
-        <div class="load-title">Production load by owner</div>
-        <div class="load-sub">Active + planned pieces assigned to each team member this period</div>
-      </div>
-      <div class="load-body" id="loadBody"></div>
-    </div>
-
-    <!-- ROOM HEALTH + GAP ANALYSIS -->
-    <div class="coverage-grid" style="margin-bottom:28px">
-      <div class="coverage-card">
-        <div class="coverage-card-head">
-          <span class="coverage-card-title">Conversation room activity</span>
-          <span style="font-size:11px;color:var(--ink-3)">pieces per room</span>
+    <div class="cal-body">
+      <div class="cal-main-col">
+        <!-- Topography -->
+        <div class="topo-section">
+          <div class="topo-label">Coverage topography — pieces by lens</div>
+          <div class="topo-chart" id="topoChart"></div>
         </div>
-        <div class="coverage-card-body" id="roomHealthGrid" style="padding:0"></div>
-      </div>
-      <div class="coverage-card">
-        <div class="coverage-card-head">
-          <span class="coverage-card-title">Gap analysis</span>
-          <span style="font-size:11px;color:var(--ink-3)">what's missing</span>
+
+        <!-- Coverage + gaps -->
+        <div class="coverage-grid">
+          <div class="coverage-card">
+            <div class="coverage-card-head">
+              <span class="coverage-card-title">Conversation room activity</span>
+              <span style="font-size:11px;color:var(--ink-3)">pieces per room</span>
+            </div>
+            <div class="coverage-card-body" id="roomHealthGrid" style="padding:0"></div>
+          </div>
+          <div class="coverage-card">
+            <div class="coverage-card-head">
+              <span class="coverage-card-title">Gap analysis</span>
+              <span style="font-size:11px;color:var(--ink-3)">what's missing</span>
+            </div>
+            <div class="coverage-card-body" id="gapCard"></div>
+          </div>
         </div>
-        <div class="coverage-card-body" id="gapCard"></div>
-      </div>
-    </div>
 
-    <!-- TOPOGRAPHY -->
-    <div class="topo-section">
-      <div class="topo-label">Coverage topography — pieces by lens</div>
-      <div class="topo-chart" id="topoChart"></div>
-    </div>
-
-    <!-- FORMAT VALUE -->
-    <div class="coverage-grid">
-      <div class="coverage-card">
-        <div class="coverage-card-head">
-          <span class="coverage-card-title">Format value layers</span>
-          <span style="font-size:11px;color:var(--ink-3)">Format Lift distribution</span>
+        <!-- Format value + repurposing -->
+        <div class="coverage-grid">
+          <div class="coverage-card">
+            <div class="coverage-card-head">
+              <span class="coverage-card-title">Format value layers</span>
+              <span style="font-size:11px;color:var(--ink-3)">Format Lift distribution</span>
+            </div>
+            <div class="coverage-card-body" id="formatValueChart"></div>
+          </div>
+          <div class="coverage-card">
+            <div class="coverage-card-head">
+              <span class="coverage-card-title">Repurposing leverage</span>
+              <span style="font-size:11px;color:var(--ink-3)">derivative potential</span>
+            </div>
+            <div class="coverage-card-body" id="repurposeCard"></div>
+          </div>
         </div>
-        <div class="coverage-card-body" id="formatValueChart"></div>
-      </div>
-      <div class="coverage-card">
-        <div class="coverage-card-head">
-          <span class="coverage-card-title">Repurposing leverage</span>
-          <span style="font-size:11px;color:var(--ink-3)">derivative potential</span>
+
+        <!-- Production load -->
+        <div class="load-card">
+          <div class="load-head">
+            <div class="load-title">Production load by owner</div>
+            <div class="load-sub">Active + planned pieces assigned to each team member this period</div>
+          </div>
+          <div class="load-body" id="loadBody"></div>
         </div>
-        <div class="coverage-card-body" id="repurposeCard"></div>
+
+        <!-- Piece log -->
+        <div class="piece-log">
+          <div class="piece-log-head">
+            <span class="piece-log-title">Piece log</span>
+            <span id="pieceCount" style="font-size:11px;color:var(--ink-3)"></span>
+          </div>
+          <div class="piece-row header">
+            <div class="pc">#</div>
+            <div class="pc">Title</div>
+            <div class="pc">Room</div>
+            <div class="pc">Lens</div>
+            <div class="pc">Format</div>
+            <div class="pc">FL</div>
+            <div class="pc">Status</div>
+            <div class="pc">Owner</div>
+            <div class="pc"></div>
+          </div>
+          <div id="pieceLog"></div>
+        </div>
+      </div>
+
+      <!-- Calendar sidebar: nutrition facts -->
+      <div class="cal-side-col">
+        <div class="nutrition-section">
+          <div class="topo-label" style="margin-bottom:14px;">Content nutrition facts</div>
+          <div class="nutrition-label-card" id="calNutritionLabel"></div>
+        </div>
+        <div style="margin-top:16px" id="calNutritionSidebar"></div>
       </div>
     </div>
-
-    <!-- PIECE LOG -->
-    <div class="piece-log">
-      <div class="piece-log-head">
-        <span class="piece-log-title">Piece log</span>
-        <span id="pieceCount" style="font-size:11px;color:var(--ink-3)"></span>
-      </div>
-      <div class="piece-row header">
-        <div class="pc">#</div>
-        <div class="pc">Title</div>
-        <div class="pc">Room</div>
-        <div class="pc">Lens</div>
-        <div class="pc">Format</div>
-        <div class="pc">FL</div>
-        <div class="pc">Status</div>
-        <div class="pc">Owner</div>
-      </div>
-      <div id="pieceLog"></div>
-    </div>
-
   </div>
 </div>
 </div>
 
-<!-- IMPORT MODAL -->
-<div class="import-modal" id="importModal">
-  <div class="import-box">
-    <div class="import-title">Import content data</div>
-    <div class="import-desc">Paste a JSON export from Monday.com or Later.com, or from Connor's n8n export. Expected: array of content objects. <a href="#" onclick="showImportSchema();return false;" style="color:var(--coral)">See schema</a></div>
-    <textarea class="import-textarea" id="importText" placeholder='[{"title":"Sandy price-guess reel","lens":"Knowledge","conv_match":"...","format":"Reel","format_lift":4,"status":"Published","horizon":"published","owner":"Sandy"},...]'></textarea>
-    <div id="importSchema" style="display:none;background:var(--paper-2);border-radius:8px;padding:12px;margin-top:10px;font-family:var(--mono);font-size:10px;color:var(--ink-2);line-height:1.6;white-space:pre-wrap;"></div>
-    <div class="import-actions">
-      <button class="analyze-btn" style="flex:1;margin-top:0" onclick="processImport()">Import</button>
-      <button class="cal-btn secondary" onclick="closeImport()">Cancel</button>
+<!-- ADD IDEA MODAL -->
+<div class="modal-overlay" id="addIdeaModal">
+  <div class="modal-box" style="width:520px">
+    <div class="modal-title">Add idea to Workshop</div>
+    <p class="modal-desc">Enter a title and optional details. You can edit everything inline in the Workshop after adding.</p>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div>
+        <div style="font-size:11px;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;">Title *</div>
+        <input id="addIdeaTitle" type="text" style="width:100%;padding:10px 12px;font-family:var(--sans);font-size:13px;border:1px solid var(--border);border-radius:8px;outline:none;" placeholder="e.g. Sandy price-guess reel at Alamance Crossing"/>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div>
+          <div style="font-size:11px;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;">Lens</div>
+          <select id="addIdeaLens" style="width:100%;padding:9px 12px;font-family:var(--sans);font-size:12px;border:1px solid var(--border);border-radius:8px;outline:none;background:white;">
+            <option value="">— select —</option>
+            <option>Knowledge</option>
+            <option>Relationships</option>
+            <option>Process / Credibility</option>
+            <option>Listing Exposure</option>
+            <option>Agent Enablement</option>
+          </select>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;">Format</div>
+          <select id="addIdeaFormat" style="width:100%;padding:9px 12px;font-family:var(--sans);font-size:12px;border:1px solid var(--border);border-radius:8px;outline:none;background:white;">
+            <option value="">— select —</option>
+            <option>Reel/Short-form video</option>
+            <option>Static post</option>
+            <option>Carousel</option>
+            <option>Long-form video</option>
+            <option>Email/Newsletter</option>
+            <option>Internal brief</option>
+          </select>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;">Format Lift</div>
+          <select id="addIdeaFL" style="width:100%;padding:9px 12px;font-family:var(--sans);font-size:12px;border:1px solid var(--border);border-radius:8px;outline:none;background:white;">
+            <option value="1">FL 1 — On the nose</option>
+            <option value="2">FL 2 — Light hook</option>
+            <option value="3" selected>FL 3 — Format doing work</option>
+            <option value="4">FL 4 — Format is the idea</option>
+          </select>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;">Owner</div>
+          <select id="addIdeaOwner" style="width:100%;padding:9px 12px;font-family:var(--sans);font-size:12px;border:1px solid var(--border);border-radius:8px;outline:none;background:white;">
+            <option value="">— select —</option>
+            <option>Brandon</option>
+            <option>Emily</option>
+            <option>Nigel</option>
+            <option>Connor</option>
+            <option>Sandy</option>
+            <option>Claire</option>
+            <option>Agent-led</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;">Notes</div>
+        <textarea id="addIdeaNotes" style="width:100%;height:70px;padding:10px 12px;font-family:var(--sans);font-size:12px;border:1px solid var(--border);border-radius:8px;outline:none;resize:none;" placeholder="Any context, constraints, or refinement notes..."></textarea>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="analyze-btn" style="margin-top:0" onclick="confirmAddIdea()">Add to Workshop</button>
+      <button class="ws-btn secondary" onclick="closeModal('addIdeaModal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- EXPORT / IMPORT MODALS -->
+<div class="modal-overlay" id="exportModal">
+  <div class="modal-box">
+    <div class="modal-title" id="exportModalTitle">Export</div>
+    <p class="modal-desc">Copy this JSON to share with the team or back up your data. Paste it back via Import to restore.</p>
+    <textarea class="modal-textarea" id="exportText" readonly></textarea>
+    <div class="modal-actions">
+      <button class="ws-btn" onclick="copyExport()">Copy to clipboard</button>
+      <button class="ws-btn secondary" onclick="closeModal('exportModal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="importModal">
+  <div class="modal-box">
+    <div class="modal-title" id="importModalTitle">Import</div>
+    <p class="modal-desc">Paste JSON exported from this tool. This will <strong>merge</strong> with existing data (duplicates skipped by title).</p>
+    <textarea class="modal-textarea" id="importText" placeholder='[{"title":"...","lens":"...","format":"...",...}]'></textarea>
+    <div class="modal-actions">
+      <button class="analyze-btn" style="margin-top:0" onclick="confirmImport()">Import</button>
+      <button class="ws-btn secondary" onclick="closeModal('importModal')">Cancel</button>
     </div>
   </div>
 </div>
@@ -654,17 +835,11 @@ function saveKey(){
   document.getElementById('keyStatus').textContent = '✓ Engine active';
   document.getElementById('keyBanner').classList.add('active');
 }
-
-document.getElementById('keyInput').addEventListener('keydown', e => {
-  if(e.key === 'Enter') saveKey();
-});
+document.getElementById('keyInput').addEventListener('keydown', e => { if(e.key === 'Enter') saveKey(); });
 
 // ══════════════════════════════════════
 // CONSTANTS
 // ══════════════════════════════════════
-// ── STATE (declared first to avoid initialization errors) ──
-let calendarData=[];
-let currentHorizon='active';
 let sessionData=[];
 let sessionStartTime=new Date();
 let genGapMode=false;
@@ -691,9 +866,16 @@ const STATUS_COLORS = {
   "In Production":{bg:"#FAEEDA",text:"#633806"},
   "Approved":{bg:"#E6F1FB",text:"#0C447C"},
   "Planned":{bg:"#EEEDFE",text:"#3C3489"},
-  "Scored":{bg:"#E8E5DE",text:"#5F5E5A"}
+  "Scored":{bg:"#E8E5DE",text:"#5F5E5A"},
+  "Draft":{bg:"#F2F0EB",text:"#7A7870"},
+  "Ready":{bg:"#E1F5EE",text:"#085041"}
 };
+const WS_STATUSES = ["Draft","Ready","Approved"];
 const LENSES = ["Knowledge","Relationships","Process / Credibility","Listing Exposure","Agent Enablement"];
+const OWNER_COLORS = {
+  "Brandon":"#D85A30","Emily":"#185FA5","Nigel":"#534AB7",
+  "Connor":"#0F6E56","Sandy":"#BA7517","Claire":"#639922","Agent-led":"#888780"
+};
 const ALL_ROOMS = [
   "What does buying or selling feel like right now?",
   "What actually makes my home sell for more or less?",
@@ -731,13 +913,84 @@ const ALL_ROOMS = [
   "What client wins and moments are we most proud of?",
   "What does B&Co do differently than every other brokerage here?"
 ];
-const OWNER_COLORS = {
-  "Brandon":"#D85A30","Emily":"#185FA5","Nigel":"#534AB7",
-  "Connor":"#0F6E56","Sandy":"#BA7517","Claire":"#639922","Agent-led":"#888780"
-};
 
 // ══════════════════════════════════════
-// SHARED SYSTEM PROMPT
+// PERSISTENCE — localStorage
+// ══════════════════════════════════════
+const LS_WORKSHOP = 'bbco_workshop_v9';
+const LS_CALENDAR = 'bbco_calendar_v9';
+
+function loadWorkshopFromStorage(){
+  try{ return JSON.parse(localStorage.getItem(LS_WORKSHOP)||'[]'); }
+  catch(e){ return []; }
+}
+function saveWorkshopToStorage(){
+  try{ localStorage.setItem(LS_WORKSHOP, JSON.stringify(workshopData)); } catch(e){}
+}
+function loadCalendarFromStorage(){
+  try{ return JSON.parse(localStorage.getItem(LS_CALENDAR)||'[]'); }
+  catch(e){ return []; }
+}
+function saveCalendarToStorage(){
+  try{ localStorage.setItem(LS_CALENDAR, JSON.stringify(calendarData)); } catch(e){}
+}
+
+let workshopData = loadWorkshopFromStorage();
+let calendarData = loadCalendarFromStorage();
+let currentHorizon = 'active';
+
+// ══════════════════════════════════════
+// NAV BADGES
+// ══════════════════════════════════════
+function updateBadges(){
+  const wb = document.getElementById('workshopBadge');
+  const cb = document.getElementById('calBadge');
+  if(workshopData.length){ wb.style.display='inline'; wb.textContent=workshopData.length; }
+  else wb.style.display='none';
+  if(calendarData.length){ cb.style.display='inline'; cb.textContent=calendarData.length; }
+  else cb.style.display='none';
+}
+
+// ══════════════════════════════════════
+// NAV
+// ══════════════════════════════════════
+function showPage(p, el){
+  document.querySelectorAll('.page').forEach(e=>e.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(e=>e.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('active');
+  if(el) el.classList.add('active');
+  else document.querySelectorAll('.nav-tab').forEach(t=>{ if(t.getAttribute('onclick')&&t.getAttribute('onclick').includes(`'${p}'`)) t.classList.add('active'); });
+  if(p==='session') renderSession();
+  if(p==='workshop') renderWorkshop();
+  if(p==='calendar') renderCalendar();
+}
+
+// ══════════════════════════════════════
+// MODE TABS (Matrix)
+// ══════════════════════════════════════
+function setMode(mode){
+  document.getElementById('tab-score').classList.toggle('active', mode==='score');
+  document.getElementById('tab-generate').classList.toggle('active', mode==='generate');
+  document.getElementById('scoreMode').style.display = mode==='score' ? 'block' : 'none';
+  document.getElementById('generateMode').style.display = mode==='generate' ? 'block' : 'none';
+  document.getElementById('resultsContent').style.display='none';
+  document.getElementById('genResultsContent').style.display='none';
+  document.getElementById('emptyState').style.display='flex';
+}
+
+// ══════════════════════════════════════
+// THREAD CHIPS
+// ══════════════════════════════════════
+document.getElementById('threadChips').addEventListener('click',e=>{
+  const chip=e.target.closest('.thread-chip');
+  if(chip) chip.classList.toggle('selected');
+});
+function getSelectedThreads(){
+  return [...document.querySelectorAll('#threadChips .thread-chip.selected')].map(c=>c.dataset.thread);
+}
+
+// ══════════════════════════════════════
+// SYSTEM PROMPT
 // ══════════════════════════════════════
 const SYSTEM_PROMPT = `You are the B&Co Content Matrix AI for Barbour & Company, a real estate brokerage in Burlington, NC (serving the Triad region). Your job is to analyze content ideas against the firm's content matrix and return structured JSON.
 
@@ -753,7 +1006,6 @@ CONNOR HEAD — Automations / Distribution. Owns: n8n/Make workflows, Monday API
 SANDY — Agent, Street-Facing Talent. High-energy on-camera, street interviews, price guesses. Always needs Nigel as production partner.
 CLAIRE — Agent. Ideation and brief on pieces with direct client context. Process/credibility content.
 AGENT-LED — when an agent is the primary on-camera talent. Always flag production support owner.
-COLLABORATIVE — only when 2+ owners genuinely required at production level.
 
 LENS ARCHITECTURE: Relationships is the root value. Knowledge and Process/Credibility are its wings.
 
@@ -763,36 +1015,33 @@ High score: Local market data, decision-stage education, myth-busting with local
 Failure mode: Vague truisms. Could have been written by anyone anywhere. No specific takeaway.
 
 LENS 2 — RELATIONSHIPS (Coral) · "Why this place feels different" · Root brand value
-Measures: Depth of humanness — not presence of a person on screen. Whether the idea honors what the transaction actually is: shelter, a home, the largest budget line most families carry.
-High score: Real moments. Content acknowledging the weight of the transaction. Community presence as neighbors. Warmth earned by the moment.
-Failure mode: Performs warmth without earning it. Smiling headshots. "We love our clients."
+Measures: Depth of humanness — not the presence of a person on screen. Whether the idea honors what the transaction actually is: shelter, a physical necessity; a home, where families grow; the largest budget line most American households carry; often the most consequential financial decision of a lifetime. Also an organizational value: the brick-and-mortar office, face-to-face culture are Relationships content.
+High score: Real moments, client wins, team warmth, community belonging, content that earns emotional residue.
+Failure mode: A person on screen doesn't automatically score high. If it's transactional, it doesn't register.
 
 LENS 3 — PROCESS / CREDIBILITY (Blue) · "The standard everyone else skips" · Wing of Relationships
-Measures: Whether the idea shows B&Co at a higher standard than the market expects — revealing a specific process moment consumers didn't know existed.
-High score: Transparency pieces. What most agents skip. Behind-the-scenes of operations. "I didn't know they did that."
-Failure mode: Generic "great process" slogans without demonstration.
+Measures: Whether the piece proves competence through specificity. Radical transparency. Behind-the-scenes that reveals the standard others hide.
+High score: Contract step breakdowns, what really happens at closing, the 5 things your agent actually does, fixture vs. personal property edge cases.
+Failure mode: Generic "we have a process" claims. No specific detail that creates actual trust.
 
-LENS 4 — LISTING EXPOSURE (Teal) · "Homes we're proud to represent" · Core function
-Measures: Whether a piece directly serves or extends a listing's reach. Scores integration across channels.
+LENS 4 — LISTING EXPOSURE (Teal) · "Homes we're proud to represent"
+Measures: Whether a piece directly serves or extends a listing's reach.
 High score: Walkthroughs at a shareable standard. Just-listed with full context. Brand content that draws eyes to listings.
 Failure mode: Great video with no QR on the sign. Listing content in isolation.
 
 LENS 5 — AGENT ENABLEMENT (Purple) · "What works right now — go do this" · Internal + external
-Measures: Whether the idea genuinely equips an agent at a specific stage. Flags internal-only vs. public-shareable.
+Measures: Whether the idea genuinely equips an agent at a specific stage.
 High score: Monthly skill brief. Internal playbooks. Public agent education. Recruiting-adjacent content.
 Failure mode: Aspirational content with no specific takeaway.
 
 FORMAT LIFT (1–4):
 1 — ON THE NOSE: Direct delivery. Talking head. Works for warm audiences; scrolled past cold.
 2 — LIGHT HOOK: Strong opening or counter-intuitive frame. Earns seconds but doesn't carry through.
-3 — FORMAT DOING WORK: Form and content create tension or curiosity. Format is why someone watches to the end.
+3 — FORMAT DOING WORK: Form and content create tension or curiosity.
 4 — FORMAT IS THE IDEA: Form and content inseparable. Reason to watch independent of real estate interest.
 If Format Lift 1–2, refinement_suggestions MUST name the specific format mechanism that moves it to a 3.
 
 PRODUCTION DIFFICULTY: 1 Easy · 2 Low-Med · 3 Medium · 4 High
-Consider: number of locations, coordination required, pre-production complexity, number of stakeholders, Format Lift vs. execution cost.
-
-REPURPOSING RULE: For each piece, name the specific derivative sub-tasks that can be produced from the source material — not just format names. E.g. "Clip 3 pull quotes for static posts (Emily, ~45min each)" not just "Static post."
 
 CONVERSATION ROOMS — 35 active rooms:
 01. What does buying or selling feel like right now? [Knowledge · Top]
@@ -841,7 +1090,7 @@ const SCORE_SCHEMA = `Return ONLY valid JSON, no preamble, no markdown:
   "lens_score_rationale":{"Knowledge":"one sentence","Relationships":"one sentence","Process / Credibility":"one sentence","Listing Exposure":"one sentence","Agent Enablement":"one sentence"},
   "format_lift":"[1-4]",
   "format_lift_label":"On the nose / Light hook / Format doing work / Format is the idea",
-  "format_lift_rationale":"one sentence — mechanism present or what would move it to FL3",
+  "format_lift_rationale":"one sentence",
   "audiences":[],
   "funnel_tier":"Top / Mid / Bottom / Internal",
   "narrative_thread":"best-fit thread",
@@ -864,87 +1113,6 @@ const SCORE_SCHEMA = `Return ONLY valid JSON, no preamble, no markdown:
   "distribution_notes":"channel, timing, format guidance",
   "engagement_hooks":"caption angles, CTA ideas, comment-bait"
 }`;
-
-// ══════════════════════════════════════
-// NAV
-// ══════════════════════════════════════
-function showPage(p, el){
-  document.querySelectorAll('.page').forEach(e=>e.classList.remove('active'));
-  document.querySelectorAll('.nav-tab').forEach(e=>e.classList.remove('active'));
-  document.getElementById('page-'+p).classList.add('active');
-  if(el) el.classList.add('active');
-  if(p==='session') renderSession();
-  if(p==='calendar') renderCalendar();
-}
-
-// ══════════════════════════════════════
-// MODE TABS
-// ══════════════════════════════════════
-function setMode(mode){
-  document.getElementById('tab-score').classList.toggle('active', mode==='score');
-  document.getElementById('tab-generate').classList.toggle('active', mode==='generate');
-  document.getElementById('scoreMode').style.display = mode==='score' ? 'block' : 'none';
-  document.getElementById('generateMode').style.display = mode==='generate' ? 'block' : 'none';
-  document.getElementById('resultsContent').style.display='none';
-  document.getElementById('genResultsContent').style.display='none';
-  document.getElementById('emptyState').style.display='flex';
-}
-
-// ══════════════════════════════════════
-// THREAD CHIPS (score mode)
-// ══════════════════════════════════════
-document.getElementById('threadChips').addEventListener('click',e=>{
-  const chip=e.target.closest('.thread-chip');
-  if(chip) chip.classList.toggle('selected');
-});
-function getSelectedThreads(){
-  return [...document.querySelectorAll('#threadChips .thread-chip.selected')].map(c=>c.dataset.thread);
-}
-
-// ══════════════════════════════════════
-// GENERATE MODE ROOM GRID
-// ══════════════════════════════════════
-
-function buildGenRoomGrid(){
-  const grid = document.getElementById('genRoomGrid');
-  grid.innerHTML = ALL_ROOMS.map((room,i)=>{
-    const calData = calendarData;
-    const count = calData.filter(d=>d.conv_match===room).length;
-    const badge = count > 0 ? `<span style="font-size:9px;color:var(--ink-3);margin-left:4px">(${count})</span>` : `<span style="font-size:9px;color:var(--coral);margin-left:4px">empty</span>`;
-    return `<div class="gen-room-chip" data-room="${room}" onclick="toggleGenRoom(this,'${room.replace(/'/g,"\\'")}')">
-      <span style="font-size:9px;color:var(--ink-3);margin-right:4px">${String(i+1).padStart(2,'0')}</span>${room}${badge}
-    </div>`;
-  }).join('');
-}
-
-function toggleGenRoom(el, room){
-  if(genGapMode){ genGapMode=false; document.getElementById('genGapBtn').classList.remove('active'); }
-  el.classList.toggle('selected');
-  if(el.classList.contains('selected')){
-    if(!selectedGenRooms.includes(room)) selectedGenRooms.push(room);
-  } else {
-    selectedGenRooms = selectedGenRooms.filter(r=>r!==room);
-  }
-}
-
-function clearGenRooms(){
-  selectedGenRooms=[];
-  genGapMode=false;
-  document.getElementById('genGapBtn').classList.remove('active');
-  document.querySelectorAll('.gen-room-chip').forEach(c=>c.classList.remove('selected'));
-}
-
-function toggleGapMode(){
-  genGapMode = !genGapMode;
-  document.getElementById('genGapBtn').classList.toggle('active', genGapMode);
-  if(genGapMode){
-    selectedGenRooms=[];
-    document.querySelectorAll('.gen-room-chip').forEach(c=>c.classList.remove('selected'));
-  }
-}
-
-// Build grid on load
-buildGenRoomGrid();
 
 // ══════════════════════════════════════
 // SCORE AN IDEA
@@ -984,7 +1152,6 @@ ${SCORE_SCHEMA}`;
     const result = JSON.parse(clean);
     renderResults(result);
     addToSession(result, idea);
-    addToCalendar(result, 'Scored');
   }catch(err){
     document.getElementById('resultsContent').innerHTML=`<div style="color:#D85A30;font-size:13px;padding:16px;">Something went wrong.<br><small style="color:#7A7870">${err.message}</small></div>`;
     document.getElementById('resultsContent').style.display='block';
@@ -995,6 +1162,37 @@ ${SCORE_SCHEMA}`;
 // ══════════════════════════════════════
 // GENERATE IDEAS
 // ══════════════════════════════════════
+function buildGenRoomGrid(){
+  const grid = document.getElementById('genRoomGrid');
+  grid.innerHTML = ALL_ROOMS.map((room,i)=>{
+    const wsCount = workshopData.filter(d=>d.conv_match===room).length;
+    const calCount = calendarData.filter(d=>d.conv_match===room).length;
+    const total = wsCount + calCount;
+    const badge = total > 0 ? `<span style="font-size:9px;color:var(--ink-3);margin-left:4px">(${total})</span>` : `<span style="font-size:9px;color:var(--coral);margin-left:4px">empty</span>`;
+    return `<div class="gen-room-chip" data-room="${room}" onclick="toggleGenRoom(this,'${room.replace(/'/g,"\\'")}')">
+      <span style="font-size:9px;color:var(--ink-3);margin-right:4px">${String(i+1).padStart(2,'0')}</span>${room}${badge}
+    </div>`;
+  }).join('');
+}
+function toggleGenRoom(el, room){
+  if(genGapMode){ genGapMode=false; document.getElementById('genGapBtn').classList.remove('active'); }
+  el.classList.toggle('selected');
+  if(el.classList.contains('selected')){ if(!selectedGenRooms.includes(room)) selectedGenRooms.push(room); }
+  else { selectedGenRooms = selectedGenRooms.filter(r=>r!==room); }
+}
+function clearGenRooms(){
+  selectedGenRooms=[];
+  genGapMode=false;
+  document.getElementById('genGapBtn').classList.remove('active');
+  document.querySelectorAll('.gen-room-chip').forEach(c=>c.classList.remove('selected'));
+}
+function toggleGapMode(){
+  genGapMode = !genGapMode;
+  document.getElementById('genGapBtn').classList.toggle('active', genGapMode);
+  if(genGapMode){ selectedGenRooms=[]; document.querySelectorAll('.gen-room-chip').forEach(c=>c.classList.remove('selected')); }
+}
+buildGenRoomGrid();
+
 async function generateIdeas(){
   const btn = document.getElementById('generateBtn');
   const bar = document.getElementById('genLoadingBar');
@@ -1009,20 +1207,17 @@ async function generateIdeas(){
   const funnel = document.getElementById('genFunnel').value;
   const context = document.getElementById('genContext').value.trim();
 
-  // Build gap context from calendar
-  const gapRooms = calendarData.length ? getGapRooms() : [];
-  const calSummary = calendarData.length
-    ? `Current calendar has ${calendarData.length} pieces. Rooms with 0 content: ${gapRooms.slice(0,8).join(', ')}${gapRooms.length>8?' (and more)':''}.`
-    : 'No calendar data loaded yet.';
+  const allData = [...workshopData, ...calendarData];
+  const covered = new Set(allData.map(d=>d.conv_match));
+  const gapRooms = ALL_ROOMS.filter(r=>!covered.has(r));
+  const calSummary = allData.length
+    ? `Current pipeline has ${allData.length} pieces (${workshopData.length} in workshop, ${calendarData.length} on calendar). Rooms with 0 content: ${gapRooms.slice(0,8).join(', ')}${gapRooms.length>8?' (and more)':''}.`
+    : 'No content in pipeline yet.';
 
   let roomTarget = '';
-  if(genGapMode){
-    roomTarget = `TARGET: Fill the highest-priority gap rooms based on the calendar state above. Prioritize rooms with 0 content and high strategic value (money anxiety, skeptic cluster, Burlington identity rooms).`;
-  } else if(selectedGenRooms.length){
-    roomTarget = `TARGET ROOMS: ${selectedGenRooms.join(' | ')}`;
-  } else {
-    roomTarget = `TARGET: Generate ideas across rooms that serve a broad content calendar — prioritize rooms with the highest strategic leverage for B&Co right now.`;
-  }
+  if(genGapMode){ roomTarget = `TARGET: Fill the highest-priority gap rooms based on the pipeline state above.`; }
+  else if(selectedGenRooms.length){ roomTarget = `TARGET ROOMS: ${selectedGenRooms.join(' | ')}`; }
+  else { roomTarget = `TARGET: Generate ideas across rooms that serve a broad content calendar — prioritize rooms with the highest strategic leverage for B&Co right now.`; }
 
   const userMsg = `You are generating a slate of content ideas for B&Co's content calendar.
 
@@ -1055,7 +1250,7 @@ Return ONLY valid JSON array, no preamble:
 ]`;
 
   if(!ANTHROPIC_API_KEY){
-    document.getElementById('genResultsContent').innerHTML=`<div style="color:#D85A30;font-size:13px;padding:16px;">No API key set — paste your Anthropic key in the bar at the top and click Activate.</div>`;
+    document.getElementById('genResultsContent').innerHTML=`<div style="color:#D85A30;font-size:13px;padding:16px;">No API key set.</div>`;
     document.getElementById('genResultsContent').style.display='block';
     btn.disabled=false; btn.textContent='Generate idea slate'; bar.classList.remove('active');
     return;
@@ -1074,7 +1269,7 @@ Return ONLY valid JSON array, no preamble:
     const ideas = JSON.parse(clean);
     renderGeneratedIdeas(ideas);
   }catch(err){
-    document.getElementById('genResultsContent').innerHTML=`<div style="color:#D85A30;font-size:13px;padding:16px;">Generation failed.<br><small style="color:#7A7870">${err.message}</small></div>`;
+    document.getElementById('genResultsContent').innerHTML=`<div style="color:#D85A30;font-size:13px;padding:16px;">Generation failed.<br><small>${err.message}</small></div>`;
     document.getElementById('genResultsContent').style.display='block';
   }
   btn.disabled=false; btn.textContent='Generate idea slate'; bar.classList.remove('active');
@@ -1082,11 +1277,9 @@ Return ONLY valid JSON array, no preamble:
 
 function renderGeneratedIdeas(ideas){
   const container = document.getElementById('genResultsContent');
-  const fl=FL_COLORS; const lc=LENS_COLORS;
   let html = `<div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-3);margin-bottom:14px">${ideas.length} ideas generated</div><div class="gen-results">`;
-
   ideas.forEach((idea, i)=>{
-    const flColor = fl[parseInt(idea.format_lift_estimate)||1];
+    const flColor = FL_COLORS[parseInt(idea.format_lift_estimate)||1];
     const lens = LENS_COLORS[idea.primary_lens]||{bg:"#F1EFE8",text:"#444",dot:"#888"};
     const diffColors = ["","#639922","#BA7517","#D85A30","#A32D2D"];
     const diffColor = diffColors[parseInt(idea.difficulty_estimate)||1];
@@ -1119,7 +1312,7 @@ function renderGeneratedIdeas(ideas){
         </div>
         <div class="gen-actions">
           <button class="gen-score-btn" onclick="scoreGeneratedIdea(${i})">Run full matrix score</button>
-          <button class="approve-btn" onclick="approveGeneratedIdea(${i}, '${idea.idea.replace(/'/g,"\\'")}', '${(idea.primary_lens||'').replace(/'/g,"\\'")}', '${(idea.room||'').replace(/'/g,"\\'")}', '${(idea.format||'').replace(/'/g,"\\'")}', ${parseInt(idea.format_lift_estimate)||1}, '${(idea.suggested_owner||'').replace(/'/g,"\\'")}', ${parseInt(idea.difficulty_estimate)||1}, '${(idea.funnel_tier||'').replace(/'/g,"\\'")}')">Approve to calendar</button>
+          <button class="approve-btn" onclick="sendGenToWorkshop(${i})">→ Send to Workshop</button>
         </div>
       </div>
     </div>`;
@@ -1143,24 +1336,24 @@ function scoreGeneratedIdea(i){
   analyzeIdea();
 }
 
-function approveGeneratedIdea(i, idea, lens, room, format, fl, owner, diff, funnel){
-  calendarData.push({
-    title: idea.substring(0,100),
-    lens: lens,
-    conv_match: room,
-    format: format,
-    format_lift: fl,
-    status: 'Approved',
-    horizon: 'planned',
+function sendGenToWorkshop(i){
+  const idea = window._lastGeneratedIdeas?.[i];
+  if(!idea) return;
+  addToWorkshop({
+    title: idea.idea.substring(0,120),
+    lens: idea.primary_lens||'',
+    conv_match: idea.room||'—',
+    format: idea.format||'',
+    format_lift: parseInt(idea.format_lift_estimate)||1,
+    funnel_tier: idea.funnel_tier||'',
+    owner: idea.suggested_owner||'',
+    difficulty: parseInt(idea.difficulty_estimate)||1,
     score: null,
-    funnel_tier: funnel,
-    audiences: [],
-    owner: owner,
-    difficulty: diff
+    notes: `Why now: ${idea.why_now||''}. Repurpose: ${idea.repurpose_potential||''}`,
+    status: 'Draft'
   });
   const btn = document.querySelector(`#gen-idea-body-${i} .approve-btn`);
-  if(btn){ btn.textContent='✓ Added to calendar'; btn.disabled=true; btn.style.background='var(--teal-d)'; }
-  buildGenRoomGrid();
+  if(btn){ btn.textContent='✓ In Workshop'; btn.disabled=true; btn.style.background='var(--teal-d)'; }
 }
 
 // ══════════════════════════════════════
@@ -1182,7 +1375,6 @@ function renderResults(r){
   const audTags=(r.audiences||[]).map(a=>{const ac=AUD_COLORS[a]||{bg:"#F1EFE8",text:"#444441"};return`<span class="tag" style="background:${ac.bg};color:${ac.text}">${a}</span>`;}).join('');
   const secTags=(r.secondary_lenses||[]).map(l=>{const lc=LENS_COLORS[l]||{bg:"#F1EFE8",text:"#444441"};return`<span class="tag" style="background:${lc.bg};color:${lc.text}">${l}</span>`;}).join('');
   const wfItems=(r.workflow_steps||[]).map((s,i)=>`<div class="wf-item"><div class="wf-num">${i+1}</div><div class="wf-text">${s}</div></div>`).join('');
-  const relTags=(r.related_threads||[]).map(t=>`<span class="tag" style="background:#F1EFE8;color:#5F5E5A;font-style:italic">${t}</span>`).join('');
   const cf=r.content_formats||{};
   const primaryFmt=cf.primary?`<span class="format-primary">${cf.primary}</span>`:'';
   const secFmts=(cf.repurposing||[]).map(f=>`<span class="format-secondary">${f}</span>`).join('');
@@ -1200,29 +1392,40 @@ function renderResults(r){
     {k:"Due offset",v:`+${me.due_date_offset_days||'?'} days`},
   ].map(f=>`<div class="monday-field"><div class="monday-key">${f.k}</div><div class="monday-val">${f.v||'—'}</div></div>`).join('');
 
+  const lc=LENS_COLORS[r.primary_lens]||{bg:"#F1EFE8",text:"#444441",dot:"#888780"};
+  const verdictColor=r.verdict&&r.verdict.startsWith('Green')?'#0F6E56':r.verdict&&r.verdict.startsWith('Park')?'#888780':'#BA7517';
+
   const html=`
     <div class="overall-score">
-      <div><div class="score-big-label">Matrix score</div><div class="score-big">${r.overall_score}<span style="font-size:20px;opacity:.5">%</span></div></div>
-      <div style="flex:1"><div class="score-verdict">${r.verdict}</div><div style="margin-top:6px;font-size:11px;color:rgba(255,255,255,.4)">Primary: ${r.primary_lens} · ${r.funnel_tier} funnel</div></div>
-      <div style="text-align:right;flex-shrink:0">
-        <div style="font-size:10px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">Format Lift</div>
-        <div style="font-family:var(--mono);font-size:22px;font-weight:500;color:${flColor}">${fl}/4</div>
-        <div style="font-size:10px;color:rgba(255,255,255,.4);margin-top:1px">${r.format_lift_label||''}</div>
+      <div>
+        <div class="score-big-label">Matrix score</div>
+        <div class="score-big">${r.overall_score}<span style="font-size:20px;opacity:.5">%</span></div>
+      </div>
+      <div style="flex:1">
+        <div style="font-size:10px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px">Verdict</div>
+        <div class="score-verdict" style="color:rgba(255,255,255,.9)">${r.verdict||''}</div>
+        <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+          <span class="tag" style="background:${lc.bg};color:${lc.text};font-size:10px">${r.primary_lens||''}</span>
+          <span style="font-size:11px;color:rgba(255,255,255,.5)">FL ${fl}/4 — ${r.format_lift_label||''}</span>
+        </div>
       </div>
     </div>
 
-    <div style="display:flex;gap:8px;margin-bottom:14px">
-      <button class="approve-btn" style="flex:1;padding:10px" onclick="approveToCalendar()">✓ Approve to calendar</button>
-      <button class="copy-btn" style="padding:10px 16px;font-size:11px" onclick="copyMonday(this)">Copy Monday JSON</button>
+    <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+      <button class="approve-btn" onclick="sendScoredToWorkshop()">→ Send to Workshop</button>
+      <button class="copy-btn" onclick="copyMonday(this)">Copy Monday JSON</button>
     </div>
 
     <div class="result-card">
-      <div class="result-card-header"><span class="rct">Lens scores</span><span style="font-size:11px;color:var(--ink-3)">% fit + rationale</span></div>
+      <div class="result-card-header"><span class="rct">Lens scores</span></div>
       <div class="result-card-body"><div class="score-grid">${lensScoreRows}</div></div>
     </div>
 
     <div class="result-card">
-      <div class="result-card-header"><span class="rct">Format Lift</span><span style="font-size:11px;font-weight:600;color:${flColor}">${r.format_lift_label||''}</span></div>
+      <div class="result-card-header">
+        <span class="rct">Format Lift</span>
+        <span style="font-size:11px;font-weight:600;color:${flColor}">${r.format_lift_label||''}</span>
+      </div>
       <div class="result-card-body">
         <div class="fl-track">${flPips}</div>
         <div class="fl-label">${fl}/4 — ${r.format_lift_label||''}</div>
@@ -1234,34 +1437,14 @@ function renderResults(r){
       <div class="result-card-header"><span class="rct">Conversation room</span></div>
       <div class="result-card-body">
         <div style="font-size:13px;font-weight:500;color:var(--ink);margin-bottom:4px">${r.conv_match||'—'}</div>
-        <div style="font-size:12px;color:var(--ink-3);line-height:1.5">${r.conv_match_rationale||''}</div>
+        <div style="font-size:12px;color:var(--ink-3);font-style:italic;margin-bottom:8px">${r.conv_match_rationale||''}</div>
+        <div style="font-size:11px;color:var(--ink-3)">Thread: <em>"${r.narrative_thread||''}"</em></div>
       </div>
     </div>
 
     <div class="result-card">
-      <div class="result-card-header"><span class="rct">Audiences served</span></div>
-      <div class="result-card-body">
-        <div class="tag-row">${audTags}</div>
-        ${secTags?`<div style="margin-top:8px"><div style="font-size:10px;color:var(--ink-3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Also touches</div><div class="tag-row">${secTags}</div></div>`:''}
-      </div>
-    </div>
-
-    <div class="result-card">
-      <div class="result-card-header"><span class="rct">Narrative thread</span></div>
-      <div class="result-card-body">
-        <div style="font-family:var(--serif);font-size:16px;color:var(--ink);margin-bottom:6px;font-style:italic">"${r.narrative_thread}"</div>
-        <div style="font-size:12px;color:var(--ink-3);line-height:1.5">${r.thread_rationale}</div>
-        ${relTags?`<div style="margin-top:10px"><div style="font-size:10px;color:var(--ink-3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Adjacent rooms</div><div class="tag-row">${relTags}</div></div>`:''}
-      </div>
-    </div>
-
-    <div class="result-card">
-      <div class="result-card-header"><span class="rct">Content formats + repurposing</span></div>
-      <div class="result-card-body">
-        <div class="format-grid">${primaryFmt}${secFmts}</div>
-        ${cf.repurposing_notes?`<div style="font-size:12px;color:var(--ink-2);line-height:1.6;margin-bottom:8px">${cf.repurposing_notes}</div>`:''}
-        ${cf.format_limitations?`<div style="font-size:11px;color:var(--ink-3);font-style:italic;border-top:1px solid var(--border);padding-top:8px;line-height:1.5">Ceiling: ${cf.format_limitations}</div>`:''}
-      </div>
+      <div class="result-card-header"><span class="rct">Audiences</span></div>
+      <div class="result-card-body"><div class="tag-row">${audTags}${secTags}</div></div>
     </div>
 
     <div class="result-card">
@@ -1270,34 +1453,39 @@ function renderResults(r){
         <span style="font-size:11px;font-weight:600;color:${diffColor}">${r.difficulty_label} · ${r.suggested_owner}${r.support_owner?` + ${r.support_owner}`:''}</span>
       </div>
       <div class="result-card-body">
-        <div style="font-size:12px;color:var(--ink-3);font-style:italic;margin-bottom:8px">${r.owner_rationale||''}</div>
-        <div style="font-size:12px;color:var(--ink-2);line-height:1.6;margin-bottom:12px">${r.production_notes}</div>
-        <div style="font-size:10px;color:var(--ink-3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px">Workflow</div>
+        <div class="format-grid">${primaryFmt}${secFmts}</div>
+        <div style="font-size:12px;color:var(--ink-3);margin-bottom:10px">${cf.repurposing_notes||''}</div>
+        <div style="font-size:12px;color:var(--ink-2);margin-bottom:12px">${r.production_notes||''}</div>
         <div class="wf-list">${wfItems}</div>
       </div>
     </div>
 
     <div class="result-card">
-      <div class="result-card-header"><span class="rct">Monday export</span></div>
+      <div class="result-card-header"><span class="rct">Refinement</span></div>
       <div class="result-card-body">
-        <div class="monday-grid">${mondayFields}</div>
-        ${me.description_block?`<div class="monday-desc"><div class="monday-key" style="margin-bottom:6px">Description block</div><pre>${me.description_block}</pre></div>`:''}
+        <div style="font-size:12px;color:var(--ink-2);line-height:1.6">${r.refinement_suggestions||'—'}</div>
       </div>
     </div>
 
     <div class="result-card">
-      <div class="result-card-header"><span class="rct">Refinement suggestions</span></div>
-      <div class="result-card-body"><div style="font-size:13px;color:var(--ink-2);line-height:1.7">${r.refinement_suggestions}</div></div>
+      <div class="result-card-header"><span class="rct">Distribution + KPI</span></div>
+      <div class="result-card-body">
+        <div style="font-size:11px;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">KPI focus</div>
+        <div style="font-size:12px;color:var(--ink-2);margin-bottom:10px">${r.kpi_focus||'—'}</div>
+        <div style="font-size:11px;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">Distribution</div>
+        <div style="font-size:12px;color:var(--ink-2);margin-bottom:10px">${r.distribution_notes||'—'}</div>
+        <div style="font-size:11px;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">Engagement hooks</div>
+        <div style="font-size:12px;color:var(--ink-2)">${r.engagement_hooks||'—'}</div>
+      </div>
     </div>
 
     <div class="result-card">
-      <div class="result-card-header"><span class="rct">KPI focus</span></div>
-      <div class="result-card-body"><div style="font-size:13px;color:var(--ink-2);line-height:1.7">${r.kpi_focus}</div></div>
-    </div>
-
-    ${r.distribution_notes?`<div class="result-card"><div class="result-card-header"><span class="rct">Distribution notes</span></div><div class="result-card-body"><div style="font-size:12px;color:var(--ink-2);line-height:1.7">${r.distribution_notes}</div></div></div>`:''}
-    ${r.engagement_hooks?`<div class="result-card"><div class="result-card-header"><span class="rct">Engagement hooks</span></div><div class="result-card-body"><div style="font-size:12px;color:var(--ink-2);line-height:1.7">${r.engagement_hooks}</div></div></div>`:''}
-  `;
+      <div class="result-card-header"><span class="rct">Monday export</span><button class="copy-btn" onclick="copyMonday(this)">Copy Monday JSON</button></div>
+      <div class="result-card-body">
+        <div class="monday-grid">${mondayFields}</div>
+        ${me.description_block?`<div class="monday-desc"><pre>${me.description_block}</pre></div>`:''}
+      </div>
+    </div>`;
 
   const container=document.getElementById('resultsContent');
   container.innerHTML=html;
@@ -1319,22 +1507,30 @@ function copyMonday(btn){
   });
 }
 
-function approveToCalendar(){
+function sendScoredToWorkshop(){
   const r = window._lastResult;
   if(!r) return;
-  const existing = calendarData.find(d=>d.title===(r.monday_item||'Untitled'));
-  if(existing){
-    existing.status='Approved';
-  }
-  const btn = document.querySelector('.approve-btn');
-  if(btn){ btn.textContent='✓ On the calendar'; btn.disabled=true; btn.style.background='var(--teal-d)'; }
-  buildGenRoomGrid();
+  addToWorkshop({
+    title: r.monday_item||'Untitled',
+    lens: r.primary_lens||'',
+    conv_match: r.conv_match||'—',
+    format: (r.content_formats&&r.content_formats.primary)||'',
+    format_lift: parseInt(r.format_lift)||1,
+    funnel_tier: r.funnel_tier||'',
+    owner: r.suggested_owner||'',
+    difficulty: parseInt(r.production_difficulty)||1,
+    score: parseInt(r.overall_score)||0,
+    audiences: r.audiences||[],
+    notes: r.refinement_suggestions||'',
+    status: 'Draft'
+  });
+  const btns = document.querySelectorAll('.approve-btn');
+  btns.forEach(b=>{ if(b.textContent.includes('Workshop')){ b.textContent='✓ In Workshop'; b.disabled=true; b.style.background='var(--teal-d)'; } });
 }
 
 // ══════════════════════════════════════
 // SESSION LOG
 // ══════════════════════════════════════
-
 function addToSession(r, rawIdea){
   sessionData.push({
     id: sessionData.length+1,
@@ -1359,7 +1555,6 @@ function addToSession(r, rawIdea){
   });
   updateSessionStats();
 }
-
 function updateSessionStats(){
   document.getElementById('sessionCount').textContent=sessionData.length;
   if(!sessionData.length) return;
@@ -1368,26 +1563,22 @@ function updateSessionStats(){
   document.getElementById('sessionAvgScore').textContent=avg+'%';
   document.getElementById('sessionAvgFL').textContent=avgFL+'/4';
 }
-
 function clearSession(){
   if(!sessionData.length) return;
   if(!confirm('Clear this session?')) return;
   sessionData=[]; sessionStartTime=new Date();
   updateSessionStats(); renderSession();
 }
-
 function toggleSessionEntry(id){
   const body=document.getElementById('session-body-'+id);
   if(body) body.classList.toggle('open');
 }
-
 function renderSession(){
   updateSessionStats();
   const empty=document.getElementById('sessionEmpty');
   const feed=document.getElementById('sessionFeed');
   if(!sessionData.length){ empty.style.display='block'; feed.innerHTML=''; return; }
   empty.style.display='none';
-
   feed.innerHTML=[...sessionData].reverse().map(entry=>{
     const lc=LENS_COLORS[entry.primary_lens]||{bg:'#F1EFE8',text:'#444441',dot:'#888780'};
     const flColor=FL_COLORS[entry.format_lift];
@@ -1423,7 +1614,6 @@ function renderSession(){
           <div class="session-field-label">Format Lift</div>
           <div class="session-field" style="color:${flColor};font-weight:600">${entry.format_lift}/4 — ${entry.format_lift_label}</div>
           <div style="margin-top:10px"><div class="session-field-label">Conversation room</div><div class="session-field">${entry.conv_match}</div></div>
-          <div style="margin-top:10px"><div class="session-field-label">Narrative thread</div><div class="session-field" style="font-style:italic">"${entry.narrative_thread}"</div></div>
           <div style="margin-top:10px"><div class="session-field-label">Owner · Difficulty · Funnel</div><div class="session-field">${entry.suggested_owner}${entry.support_owner?' + '+entry.support_owner:''} · ${entry.difficulty_label} · ${entry.funnel_tier}</div></div>
           <div style="margin-top:10px"><div class="session-field-label">Refinement</div><div class="session-field">${entry.refinement_suggestions}</div></div>
         </div>
@@ -1433,33 +1623,364 @@ function renderSession(){
 }
 
 // ══════════════════════════════════════
-// CALENDAR DATA + RENDERING
+// WORKSHOP
 // ══════════════════════════════════════
+function addToWorkshop(item){
+  const id = Date.now() + Math.random();
+  workshopData.push({ id, ...item, addedAt: new Date().toISOString() });
+  saveWorkshopToStorage();
+  updateBadges();
+  buildGenRoomGrid();
+}
 
-function addToCalendar(r, status='Scored'){
+function deleteFromWorkshop(id){
+  workshopData = workshopData.filter(d=>d.id!==id);
+  saveWorkshopToStorage();
+  updateBadges();
+  renderWorkshop();
+  buildGenRoomGrid();
+}
+
+function promoteToCalendar(id){
+  const item = workshopData.find(d=>d.id===id);
+  if(!item) return;
+  // Add to calendar with horizon based on status
   calendarData.push({
-    title: r.monday_item||'Untitled',
-    lens: r.primary_lens,
-    conv_match: r.conv_match||'—',
-    format: (r.content_formats&&r.content_formats.primary)||'Unknown',
-    format_lift: parseInt(r.format_lift)||1,
-    status: status,
-    horizon: 'active',
-    score: parseInt(r.overall_score)||0,
-    funnel_tier: r.funnel_tier||'',
-    audiences: r.audiences||[],
-    owner: r.suggested_owner||'—',
-    difficulty: parseInt(r.production_difficulty)||1,
-    repurposing: (r.content_formats&&r.content_formats.repurposing)||[],
-    repurposing_notes: (r.content_formats&&r.content_formats.repurposing_notes)||''
+    ...item,
+    id: Date.now() + Math.random(),
+    status: item.status==='Approved' ? 'Approved' : 'Planned',
+    horizon: 'planned',
+    addedAt: new Date().toISOString()
+  });
+  // Remove from workshop
+  workshopData = workshopData.filter(d=>d.id!==id);
+  saveWorkshopToStorage();
+  saveCalendarToStorage();
+  updateBadges();
+  renderWorkshop();
+  buildGenRoomGrid();
+}
+
+function cycleWorkshopStatus(id){
+  const item = workshopData.find(d=>d.id===id);
+  if(!item) return;
+  const idx = WS_STATUSES.indexOf(item.status)||0;
+  item.status = WS_STATUSES[(idx+1)%WS_STATUSES.length];
+  saveWorkshopToStorage();
+  renderWorkshop();
+}
+
+function updateWorkshopTitle(id, val){
+  const item = workshopData.find(d=>d.id===id);
+  if(item){ item.title = val; saveWorkshopToStorage(); }
+}
+
+function updateWorkshopNotes(id, val){
+  const item = workshopData.find(d=>d.id===id);
+  if(item){ item.notes = val; saveWorkshopToStorage(); renderWorkshopNutrition(); }
+}
+
+function clearWorkshop(){
+  if(!workshopData.length) return;
+  if(!confirm(`Clear all ${workshopData.length} ideas from the Workshop? This cannot be undone.`)) return;
+  workshopData=[];
+  saveWorkshopToStorage();
+  updateBadges();
+  renderWorkshop();
+  buildGenRoomGrid();
+}
+
+function openAddIdea(){ document.getElementById('addIdeaModal').classList.add('open'); document.getElementById('addIdeaTitle').focus(); }
+
+function confirmAddIdea(){
+  const title = document.getElementById('addIdeaTitle').value.trim();
+  if(!title){ document.getElementById('addIdeaTitle').style.borderColor='var(--coral)'; return; }
+  addToWorkshop({
+    title,
+    lens: document.getElementById('addIdeaLens').value||'',
+    format: document.getElementById('addIdeaFormat').value||'',
+    format_lift: parseInt(document.getElementById('addIdeaFL').value)||1,
+    owner: document.getElementById('addIdeaOwner').value||'',
+    notes: document.getElementById('addIdeaNotes').value||'',
+    conv_match: '—',
+    funnel_tier: '',
+    score: null,
+    status: 'Draft'
+  });
+  document.getElementById('addIdeaTitle').value='';
+  document.getElementById('addIdeaNotes').value='';
+  closeModal('addIdeaModal');
+  renderWorkshop();
+}
+
+function renderWorkshop(){
+  const empty = document.getElementById('workshopEmpty');
+  const feed = document.getElementById('workshopFeed');
+  if(!workshopData.length){ empty.style.display='block'; feed.innerHTML=''; renderWorkshopNutrition(); return; }
+  empty.style.display='none';
+
+  feed.innerHTML = workshopData.map(item=>{
+    const lc = LENS_COLORS[item.lens]||{bg:'#F2F0EB',text:'#7A7870',dot:'#C8C4BB'};
+    const flColor = FL_COLORS[item.format_lift||1];
+    const sc = STATUS_COLORS[item.status]||{bg:'#F2F0EB',text:'#7A7870'};
+    const ownerColor = OWNER_COLORS[item.owner]||'#888780';
+    return `<div class="ws-card" id="ws-card-${item.id}">
+      <div class="ws-card-head">
+        <div class="ws-card-drag" title="Status — click badge to cycle">&#8942;</div>
+        <div class="ws-card-body-wrap">
+          <div class="ws-card-title" onclick="startEditTitle(this, '${item.id}')">${escHtml(item.title)}</div>
+          <div class="ws-card-meta" style="margin-top:6px">
+            <button class="ws-status-badge" style="background:${sc.bg};color:${sc.text}" onclick="cycleWorkshopStatus('${item.id}')" title="Click to cycle status">${item.status}</button>
+            ${item.lens?`<span class="tag" style="background:${lc.bg};color:${lc.text};font-size:10px">${item.lens.split('/')[0].trim()}</span>`:''}
+            ${item.format?`<span style="font-size:11px;color:var(--ink-3)">${item.format}</span>`:''}
+            ${item.format_lift?`<span style="font-size:11px;font-weight:600;color:${flColor}">FL${item.format_lift}</span>`:''}
+            ${item.owner?`<span style="font-size:11px;color:${ownerColor};font-weight:500">${item.owner}</span>`:''}
+            ${item.score?`<span style="font-family:var(--mono);font-size:11px;color:var(--ink-3)">${item.score}%</span>`:''}
+          </div>
+          ${item.conv_match&&item.conv_match!=='—'?`<div style="font-size:11px;color:var(--ink-3);margin-top:4px;font-style:italic">${item.conv_match}</div>`:''}
+        </div>
+        <div class="ws-card-actions">
+          <button class="ws-action-btn promote" onclick="promoteToCalendar('${item.id}')" title="Promote to Calendar">→ Calendar</button>
+          <button class="ws-action-btn delete" onclick="deleteFromWorkshop('${item.id}')" title="Remove from Workshop">✕</button>
+        </div>
+      </div>
+      <div class="ws-notes-area">
+        <div class="ws-notes-label">Notes</div>
+        <textarea class="ws-notes-input" placeholder="Add notes, constraints, refinement ideas…" onblur="updateWorkshopNotes('${item.id}', this.value)" oninput="updateWorkshopNotes('${item.id}', this.value)">${escHtml(item.notes||'')}</textarea>
+      </div>
+    </div>`;
+  }).join('');
+
+  renderWorkshopNutrition();
+  updateBadges();
+}
+
+function startEditTitle(el, id){
+  const current = el.textContent;
+  const input = document.createElement('input');
+  input.className = 'ws-card-title-input';
+  input.value = current;
+  el.replaceWith(input);
+  input.focus();
+  input.select();
+  const save = ()=>{
+    const div = document.createElement('div');
+    div.className = 'ws-card-title';
+    div.textContent = input.value||current;
+    div.onclick = function(){ startEditTitle(this, id); };
+    input.replaceWith(div);
+    updateWorkshopTitle(id, div.textContent);
+  };
+  input.addEventListener('blur', save);
+  input.addEventListener('keydown', e=>{ if(e.key==='Enter') input.blur(); if(e.key==='Escape'){ input.value=current; input.blur(); } });
+}
+
+function escHtml(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// ══════════════════════════════════════
+// WORKSHOP NUTRITION FACTS (sidebar)
+// ══════════════════════════════════════
+function renderWorkshopNutrition(){
+  const data = workshopData;
+  const panel = document.getElementById('wsNutritionPanel');
+  const countEl = document.getElementById('wsNutritionCount');
+  countEl.textContent = data.length + (data.length===1?' idea':' ideas');
+
+  if(!data.length){
+    panel.innerHTML='<div style="font-size:12px;color:var(--ink-3);font-style:italic;padding:8px 0;">Add ideas to see your content diet.</div>';
+    return;
+  }
+  panel.innerHTML = buildNutritionHTML(data, 'Workshop');
+}
+
+function buildNutritionHTML(data, label){
+  const total = data.length||1;
+
+  // Stacked lens bar at the top
+  const lensSegments = LENSES.map(lens=>{
+    const n = data.filter(d=>d.lens===lens).length;
+    const pct = Math.round(n/total*100);
+    const lc = LENS_COLORS[lens]||{dot:'#888780'};
+    return {lens, n, pct, dot: lc.dot};
+  }).filter(s=>s.n>0);
+
+  const stackBar = lensSegments.map(s=>`<div class="stack-seg" style="flex:${s.n};background:${s.dot}" title="${s.lens}: ${s.n} (${s.pct}%)"></div>`).join('');
+
+  // Lens rows
+  const LENS_TARGETS = {Knowledge:30,Relationships:25,"Process / Credibility":20,"Listing Exposure":15,"Agent Enablement":10};
+  const lensRows = LENSES.map(lens=>{
+    const n=data.filter(d=>d.lens===lens).length;
+    const pct=Math.round(n/total*100);
+    const lc=LENS_COLORS[lens]||{dot:'#888780'};
+    const target=LENS_TARGETS[lens]||20;
+    const isRoot=lens==='Relationships';
+    const healthClass = n===0 ? 'nutrition-target-gap' : pct>=target ? 'nutrition-target-ok' : 'nutrition-target-warn';
+    return`<div class="nutrition-row${isRoot?' thick':''}">
+      <div class="nutrition-dot" style="background:${lc.dot}"></div>
+      <span class="nutrition-label-name${isRoot?' bold':''}">${lens.split('/')[0].trim()}</span>
+      <div class="nutrition-bar"><div class="nutrition-bar-fill" style="width:${pct}%;background:${lc.dot}"></div></div>
+      <span class="nutrition-val">${n}</span>
+      <span class="nutrition-dv ${healthClass}">${pct}%</span>
+    </div>`;
+  }).join('');
+
+  // FL rows
+  const flRows=[4,3,2,1].map(fl=>{
+    const n=data.filter(d=>(d.format_lift||1)===fl).length;
+    const pct=Math.round(n/total*100);
+    return`<div class="nutrition-row indent">
+      <div class="nutrition-dot" style="background:${FL_COLORS[fl]}"></div>
+      <span class="nutrition-label-name">FL${fl} — ${FL_LABELS[fl]}</span>
+      <div class="nutrition-bar"><div class="nutrition-bar-fill" style="width:${pct}%;background:${FL_COLORS[fl]}"></div></div>
+      <span class="nutrition-val">${n}</span><span class="nutrition-dv">${pct}%</span>
+    </div>`;
+  }).join('');
+
+  // Funnel rows
+  const funnelColors={Top:'#D85A30',Mid:'#BA7517',Bottom:'#0F6E56',Internal:'#534AB7'};
+  const funnelRows=['Top','Mid','Bottom','Internal'].map(f=>{
+    const n=data.filter(d=>d.funnel_tier===f).length;
+    const pct=Math.round(n/total*100);
+    return`<div class="nutrition-row indent">
+      <div class="nutrition-dot" style="background:${funnelColors[f]||'#888780'}"></div>
+      <span class="nutrition-label-name">${f} funnel</span>
+      <div class="nutrition-bar"><div class="nutrition-bar-fill" style="width:${pct}%;background:${funnelColors[f]||'#888780'}"></div></div>
+      <span class="nutrition-val">${n}</span><span class="nutrition-dv">${pct}%</span>
+    </div>`;
+  }).join('');
+
+  // Owner rows
+  const owners=['Brandon','Emily','Nigel','Sandy','Claire','Agent-led'];
+  const ownerRows = owners.map(o=>{
+    const n=data.filter(d=>d.owner===o).length;
+    if(!n) return '';
+    const pct=Math.round(n/total*100);
+    return`<div class="nutrition-row indent">
+      <div class="nutrition-dot" style="background:${OWNER_COLORS[o]||'#888780'}"></div>
+      <span class="nutrition-label-name">${o}</span>
+      <div class="nutrition-bar"><div class="nutrition-bar-fill" style="width:${pct}%;background:${OWNER_COLORS[o]||'#888780'}"></div></div>
+      <span class="nutrition-val">${n}</span><span class="nutrition-dv">${pct}%</span>
+    </div>`;
+  }).join('');
+
+  // Health score: simple heuristic
+  const relPct = Math.round(data.filter(d=>d.lens==='Relationships').length/total*100);
+  const hiFL = data.filter(d=>(d.format_lift||1)>=3).length;
+  const hiFLPct = Math.round(hiFL/total*100);
+  const topFunnel = data.filter(d=>d.funnel_tier==='Top').length;
+  const topPct = Math.round(topFunnel/total*100);
+
+  const gaps=[];
+  if(relPct<15) gaps.push(`Relationships is underrepresented (${relPct}% — target 20–25%)`);
+  if(hiFLPct<40) gaps.push(`Only ${hiFLPct}% of pieces at FL 3–4 (target ≥40%)`);
+  if(topPct<20&&total>3) gaps.push(`Top-funnel underweighted (${topPct}%)`);
+
+  return `
+    <div class="stack-bar-wrap" style="margin-bottom:16px">${stackBar||'<div style="flex:1;background:var(--paper-3)"></div>'}</div>
+
+    <div class="nutrition-label-card">
+      <div class="nutrition-label-head">
+        <div class="nutrition-label-title">Nutrition Facts</div>
+        <div class="nutrition-label-sub">${label} · content diet analysis</div>
+      </div>
+      <div class="nutrition-label-servings">${total} piece${total!==1?'s':''} · % of total shown</div>
+      <div class="nutrition-main">
+        <div class="nutrition-section-head">Lens coverage</div>
+        ${lensRows}
+        <div class="nutrition-section-head">Format Lift quality</div>
+        ${flRows}
+        <div class="nutrition-section-head">Funnel distribution</div>
+        ${funnelRows}
+        <div class="nutrition-section-head">Production load</div>
+        ${ownerRows||'<div class="nutrition-row"><span class="nutrition-label-name" style="font-style:italic;color:var(--ink-3)">No owner data</span></div>'}
+      </div>
+      <div class="nutrition-footnote">Relationships target: 20–25% as root value. FL 3–4 target: ≥40%. Top funnel anchors brand awareness.${gaps.length?'\n⚑ '+gaps.join(' · '):''}</div>
+    </div>`;
+}
+
+// ══════════════════════════════════════
+// WORKSHOP IMPORT / EXPORT
+// ══════════════════════════════════════
+let _importTarget = 'workshop';
+let _exportTarget = 'workshop';
+
+function openExportWorkshop(){
+  _exportTarget='workshop';
+  document.getElementById('exportModalTitle').textContent='Export Workshop';
+  document.getElementById('exportText').value=JSON.stringify(workshopData, null, 2);
+  document.getElementById('exportModal').classList.add('open');
+}
+function openExportCal(){
+  _exportTarget='calendar';
+  document.getElementById('exportModalTitle').textContent='Export Calendar';
+  document.getElementById('exportText').value=JSON.stringify(calendarData, null, 2);
+  document.getElementById('exportModal').classList.add('open');
+}
+function copyExport(){
+  navigator.clipboard.writeText(document.getElementById('exportText').value).then(()=>{
+    document.querySelector('#exportModal .ws-btn').textContent='Copied!';
+    setTimeout(()=>document.querySelector('#exportModal .ws-btn').textContent='Copy to clipboard',2000);
   });
 }
+function openImportWorkshop(){
+  _importTarget='workshop';
+  document.getElementById('importModalTitle').textContent='Import to Workshop';
+  document.getElementById('importText').value='';
+  document.getElementById('importModal').classList.add('open');
+}
+function openImportCal(){
+  _importTarget='calendar';
+  document.getElementById('importModalTitle').textContent='Import to Calendar';
+  document.getElementById('importText').value='';
+  document.getElementById('importModal').classList.add('open');
+}
+function confirmImport(){
+  try{
+    const parsed = JSON.parse(document.getElementById('importText').value.trim());
+    if(!Array.isArray(parsed)) throw new Error('Expected a JSON array');
+    if(_importTarget==='workshop'){
+      const existing = new Set(workshopData.map(d=>d.title));
+      let added=0;
+      parsed.forEach(item=>{
+        if(!existing.has(item.title)){
+          workshopData.push({id:Date.now()+Math.random(), status:'Draft', ...item});
+          added++;
+        }
+      });
+      saveWorkshopToStorage();
+      renderWorkshop();
+      closeModal('importModal');
+      alert(`Added ${added} ideas to Workshop (${parsed.length-added} duplicates skipped).`);
+    } else {
+      const existing = new Set(calendarData.map(d=>d.title));
+      let added=0;
+      parsed.forEach(item=>{
+        if(!existing.has(item.title)){
+          calendarData.push({id:Date.now()+Math.random(), ...item});
+          added++;
+        }
+      });
+      saveCalendarToStorage();
+      renderCalendar();
+      closeModal('importModal');
+      alert(`Added ${added} pieces to Calendar (${parsed.length-added} duplicates skipped).`);
+    }
+    updateBadges();
+    buildGenRoomGrid();
+  }catch(e){
+    alert('Import failed: '+e.message);
+  }
+}
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
 
+// ══════════════════════════════════════
+// CALENDAR
+// ══════════════════════════════════════
 function getGapRooms(){
-  const covered = new Set(calendarData.map(d=>d.conv_match));
+  const all=[...workshopData,...calendarData];
+  const covered = new Set(all.map(d=>d.conv_match));
   return ALL_ROOMS.filter(r=>!covered.has(r));
 }
-
 function getCalFiltered(){
   if(currentHorizon==='all') return calendarData;
   return calendarData.filter(d=>{
@@ -1469,12 +1990,19 @@ function getCalFiltered(){
     return true;
   });
 }
-
 function setHorizon(h, el){
   currentHorizon=h;
   document.querySelectorAll('.horizon-tab').forEach(t=>t.classList.remove('active'));
   if(el) el.classList.add('active');
   renderCalendar();
+}
+
+function deleteFromCalendar(id){
+  calendarData = calendarData.filter(d=>String(d.id)!==String(id));
+  saveCalendarToStorage();
+  updateBadges();
+  renderCalendar();
+  buildGenRoomGrid();
 }
 
 function renderCalendar(){
@@ -1487,8 +2015,8 @@ function renderCalendar(){
   document.getElementById('calContent').style.display='block';
 
   const data=getCalFiltered();
-  renderAggCards(data);
-  renderNutrition(data);
+  renderCalAggCards(data);
+  renderCalNutrition(data);
   renderProductionLoad(data);
   renderRoomHealth(data);
   renderGaps(data);
@@ -1496,79 +2024,26 @@ function renderCalendar(){
   renderFormatValue(data);
   renderRepurposeCard(data);
   renderPieceLog(data);
+  updateBadges();
 }
 
-function renderAggCards(data){
+function renderCalAggCards(data){
   const total=data.length||1;
-  const avgScore=Math.round(data.reduce((s,d)=>s+(d.score||0),0)/total);
   const avgFL=(data.reduce((s,d)=>s+(d.format_lift||1),0)/total).toFixed(1);
   const hiFL=data.filter(d=>(d.format_lift||1)>=3).length;
   const rooms=new Set(data.map(d=>d.conv_match).filter(c=>c&&c!=='—')).size;
   document.getElementById('calAggCards').innerHTML=`
     <div class="agg-card"><div class="agg-card-val">${total}</div><div class="agg-card-label">Total pieces</div><div class="agg-card-sub">in this view</div></div>
-    <div class="agg-card"><div class="agg-card-val" style="color:${avgFL>=3?'#0F6E56':avgFL>=2?'#BA7517':'#888780'}">${avgFL}</div><div class="agg-card-label">Avg Format Lift</div><div class="agg-card-sub">${hiFL} at FL 3–4</div></div>
+    <div class="agg-card"><div class="agg-card-val" style="color:${parseFloat(avgFL)>=3?'#0F6E56':parseFloat(avgFL)>=2?'#BA7517':'#888780'}">${avgFL}</div><div class="agg-card-label">Avg Format Lift</div><div class="agg-card-sub">${hiFL} at FL 3–4</div></div>
     <div class="agg-card"><div class="agg-card-val">${rooms}</div><div class="agg-card-label">Active rooms</div><div class="agg-card-sub">of 35 conversations</div></div>
-    <div class="agg-card"><div class="agg-card-val">${35-rooms}</div><div class="agg-card-label">Empty rooms</div><div class="agg-card-sub"><button class="gap-btn" onclick="setMode('generate');showPage('matrix',document.querySelector('.nav-tab'));toggleGapMode()">Fill gaps →</button></div></div>
-  `;
+    <div class="agg-card"><div class="agg-card-val">${35-rooms}</div><div class="agg-card-label">Empty rooms</div><div class="agg-card-sub"><button class="gap-btn" onclick="setMode('generate');showPage('matrix',null);toggleGapMode()">Fill gaps →</button></div></div>`;
 }
 
-function renderNutrition(data){
-  const total=data.length||1;
-  const lensRows=LENSES.map(lens=>{
-    const n=data.filter(d=>d.lens===lens).length;
-    const pct=Math.round(n/total*100);
-    const lc=LENS_COLORS[lens]||{dot:'#888780'};
-    const targets={Knowledge:30,Relationships:25,"Process / Credibility":20,"Listing Exposure":15,"Agent Enablement":10};
-    const dv=targets[lens]||20;
-    const dvPct=Math.min(Math.round(pct/dv*100),999);
-    const isRoot=lens==='Relationships';
-    return`<div class="nutrition-row${isRoot?' thick':''}">
-      <div style="display:flex;align-items:center;gap:6px;flex:1">
-        <div style="width:8px;height:8px;border-radius:2px;background:${lc.dot};flex-shrink:0"></div>
-        <span class="nutrition-label-name${isRoot?' bold':''}">${lens.split('/')[0].trim()}</span>
-      </div>
-      <div class="nutrition-bar"><div class="nutrition-bar-fill" style="width:${pct}%;background:${lc.dot}"></div></div>
-      <span class="nutrition-val">${n}</span>
-      <span class="nutrition-dv">${pct}%</span>
-    </div>`;
-  }).join('');
+function renderCalNutrition(data){
+  document.getElementById('calNutritionLabel').innerHTML = buildNutritionHTML(data,
+    currentHorizon==='all'?'All horizons':currentHorizon==='published'?'Published':currentHorizon==='active'?'Active this month':'Planned (next 60d)');
 
-  const flRows=[4,3,2,1].map(fl=>{
-    const n=data.filter(d=>(d.format_lift||1)===fl).length;
-    const pct=Math.round(n/total*100);
-    return`<div class="nutrition-row indent">
-      <span class="nutrition-label-name">FL${fl} — ${FL_LABELS[fl]}</span>
-      <div class="nutrition-bar"><div class="nutrition-bar-fill" style="width:${pct}%;background:${FL_COLORS[fl]}"></div></div>
-      <span class="nutrition-val">${n}</span><span class="nutrition-dv">${pct}%</span>
-    </div>`;
-  }).join('');
-
-  const funnelRows=['Top','Mid','Bottom','Internal'].map(f=>{
-    const n=data.filter(d=>d.funnel_tier===f).length;
-    const pct=Math.round(n/total*100);
-    const colors={Top:'#D85A30',Mid:'#BA7517',Bottom:'#0F6E56',Internal:'#534AB7'};
-    return`<div class="nutrition-row indent">
-      <span class="nutrition-label-name">${f} funnel</span>
-      <div class="nutrition-bar"><div class="nutrition-bar-fill" style="width:${pct}%;background:${colors[f]||'#888780'}"></div></div>
-      <span class="nutrition-val">${n}</span><span class="nutrition-dv">${pct}%</span>
-    </div>`;
-  }).join('');
-
-  document.getElementById('nutritionLabel').innerHTML=`
-    <div class="nutrition-label-head"><div class="nutrition-label-title">Nutrition Facts</div><div class="nutrition-label-sub">Content diet analysis</div></div>
-    <div class="nutrition-label-servings">${total} piece${total!==1?'s':''} · ${currentHorizon==='all'?'All horizons':currentHorizon==='published'?'Published':currentHorizon==='active'?'Active this month':'Planned (next 60d)'}</div>
-    <div class="nutrition-main">
-      <div class="nutrition-row thick"><span class="nutrition-label-name bold">Lens coverage</span><span class="nutrition-val" style="color:var(--ink-3);font-size:10px;font-weight:400">count · share</span></div>
-      ${lensRows}
-      <div class="nutrition-row thick" style="margin-top:6px"><span class="nutrition-label-name bold">Format Lift quality</span></div>
-      ${flRows}
-      <div class="nutrition-row thick" style="margin-top:6px"><span class="nutrition-label-name bold">Funnel distribution</span></div>
-      ${funnelRows}
-    </div>
-    <div class="nutrition-footnote">* Relationships target: 20–30% as root value. FL 3–4 target: ≥40% of social content. Top funnel anchors brand awareness.</div>
-  `;
-
-  // Sidebar: audience
+  // Audience sidebar
   const audAll={};
   data.forEach(d=>(d.audiences||[]).forEach(a=>{audAll[a]=(audAll[a]||0)+1;}));
   const audMax=Math.max(...Object.values(audAll),1);
@@ -1576,32 +2051,23 @@ function renderNutrition(data){
     const ac=AUD_COLORS[aud]||{bg:'#F1EFE8',text:'#444'};
     return`<div style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px"><span class="tag" style="background:${ac.bg};color:${ac.text}">${aud}</span><span style="font-family:var(--mono);font-size:11px;color:var(--ink-3)">${n}</span></div><div style="height:5px;background:var(--paper-3);border-radius:3px;overflow:hidden"><div style="height:100%;width:${Math.round(n/audMax*100)}%;background:${ac.text};border-radius:3px;opacity:.6"></div></div></div>`;
   }).join('');
-
-  document.getElementById('nutritionSidebar').innerHTML=`
+  document.getElementById('calNutritionSidebar').innerHTML=`
     <div style="background:white;border:1px solid var(--border);border-radius:10px;overflow:hidden">
       <div style="padding:11px 16px;border-bottom:1px solid var(--border);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-3)">Audience composition</div>
       <div style="padding:14px 16px">${audHTML||'<div style="font-size:12px;color:var(--ink-3);font-style:italic">No audience data</div>'}</div>
-    </div>
-  `;
+    </div>`;
 }
 
 function renderProductionLoad(data){
   const owners=['Brandon','Emily','Nigel','Connor','Sandy','Claire','Agent-led'];
   const ownerCounts={};
-  data.forEach(d=>{
-    const o=d.owner||'—';
-    ownerCounts[o]=(ownerCounts[o]||0)+1;
-  });
+  data.forEach(d=>{ const o=d.owner||'—'; ownerCounts[o]=(ownerCounts[o]||0)+1; });
   const max=Math.max(...Object.values(ownerCounts),1);
   const rows=owners.filter(o=>ownerCounts[o]).map(o=>{
     const count=ownerCounts[o]||0;
     const color=OWNER_COLORS[o]||'#888780';
     const pct=Math.round(count/max*100);
-    return`<div class="load-row">
-      <div class="load-owner">${o}</div>
-      <div class="load-bar-wrap"><div class="load-bar" style="width:${pct}%;background:${color}"></div></div>
-      <div class="load-count">${count} piece${count!==1?'s':''}</div>
-    </div>`;
+    return`<div class="load-row"><div class="load-owner">${o}</div><div class="load-bar-wrap"><div class="load-bar" style="width:${pct}%;background:${color}"></div></div><div class="load-count">${count} piece${count!==1?'s':''}</div></div>`;
   }).join('');
   document.getElementById('loadBody').innerHTML=rows||'<div style="font-size:12px;color:var(--ink-3);font-style:italic">No data</div>';
 }
@@ -1617,52 +2083,48 @@ function renderRoomHealth(data){
       <div class="room-health-name">${room}</div>
       <div class="room-health-bar"><div class="room-health-fill" style="width:${Math.round(count/max*100)}%"></div></div>
       <div class="room-health-count">${count}</div>
-    </div>
-  `).join('')||'<div style="padding:16px;font-size:12px;color:var(--ink-3);font-style:italic">No data</div>';
+    </div>`).join('')||'<div style="padding:16px;font-size:12px;color:var(--ink-3);font-style:italic">No data</div>';
 }
 
 function renderGaps(data){
   const gaps=[];
   const total=data.length;
-  LENSES.forEach(lens=>{
-    const count=data.filter(d=>d.lens===lens).length;
-    if(count===0) gaps.push(`No pieces under <strong>${lens}</strong> — this lens is dark in this view.`);
-  });
+  LENSES.forEach(lens=>{ const count=data.filter(d=>d.lens===lens).length; if(count===0) gaps.push(`No pieces under <strong>${lens}</strong> — this lens is dark in this view.`); });
   const lowFL=data.filter(d=>(d.format_lift||1)<=2).length;
-  if(total>3&&lowFL/total>0.6) gaps.push(`${Math.round(lowFL/total*100)}% of pieces score Format Lift 1–2. Most content is On the Nose or Light Hook. Ideate FL 3+ pieces.`);
+  if(total>3&&lowFL/total>0.6) gaps.push(`${Math.round(lowFL/total*100)}% of pieces score Format Lift 1–2. Ideate FL 3+ pieces.`);
   const relCount=data.filter(d=>d.lens==="Relationships").length;
   if(relCount/Math.max(total,1)<0.15&&total>4) gaps.push(`Relationships underrepresented (${relCount} of ${total} pieces). As the root value it should anchor a meaningful share.`);
   const topCount=data.filter(d=>d.funnel_tier==='Top').length;
   if(topCount/Math.max(total,1)<0.2&&total>4) gaps.push(`Only ${topCount} Top-funnel pieces (${Math.round(topCount/Math.max(total,1)*100)}%). Brand awareness content is underweighted.`);
   const gapRooms=getGapRooms();
   if(gapRooms.length>0) gaps.push(`${gapRooms.length} of 35 conversation rooms have no content. High-priority empty rooms: <em>${gapRooms.slice(0,4).join(', ')}${gapRooms.length>4?' and more':''}</em>.`);
-
   document.getElementById('gapCard').innerHTML=gaps.length
     ? gaps.map(g=>`<div class="gap-bar">${g}</div>`).join('')
     : '<div style="font-size:12px;color:var(--ink-3);font-style:italic;padding:4px 0">No significant gaps detected in this view.</div>';
 }
 
 function renderTopo(data){
-  const lenses=["Knowledge","Relationships","Process / Credibility","Listing Exposure","Agent Enablement"];
   const formats=["Reel/Short-form video","Static post","Carousel","Long-form video","Email/Newsletter","Other"];
   const fmtColors=["#D85A30","#BA7517","#534AB7","#0F6E56","#185FA5","#888780"];
   let html=`<div style="display:grid;grid-template-columns:repeat(5,1fr);">`;
-  lenses.forEach(lens=>{
+  LENSES.forEach(lens=>{
     const lc=LENS_COLORS[lens]||{dot:"#888780",bg:"#F1EFE8",text:"#444"};
     html+=`<div style="border-right:1px solid var(--border);"><div style="padding:10px 14px;background:${lc.bg};border-bottom:1px solid var(--border);"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:${lc.text}">${lens.split('/')[0].trim()}</div></div>`;
     const pieces=data.filter(d=>d.lens===lens);
     const total=pieces.length;
-    if(!total){
-      html+=`<div style="padding:16px 14px;font-size:12px;color:var(--ink-3);font-style:italic">No pieces</div>`;
-    } else {
+    if(!total){ html+=`<div style="padding:16px 14px;font-size:12px;color:var(--ink-3);font-style:italic">No pieces</div>`; }
+    else {
       const byFormat={};
       pieces.forEach(p=>{const f=formats.find(f=>p.format&&p.format.includes(f.split('/')[0]))||'Other';byFormat[f]=(byFormat[f]||0)+1;});
       Object.entries(byFormat).sort((a,b)=>b[1]-a[1]).forEach(([fmt,count])=>{
         const pct=Math.round(count/total*100);
         const color=fmtColors[formats.indexOf(fmt)]||"#888780";
-        html+=`<div style="padding:7px 14px;border-bottom:1px solid var(--paper-3);display:flex;align-items:center;gap:8px;"><div style="flex:1;min-width:0"><div style="font-size:11px;color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${fmt.split('/')[0]}</div><div style="height:5px;background:var(--paper-3);border-radius:3px;margin-top:3px;overflow:hidden"><div style="height:100%;width:${pct}%;background:${color};border-radius:3px"></div></div></div><span style="font-family:var(--mono);font-size:12px;color:var(--ink-3);flex-shrink:0">${count}</span></div>`;
+        html+=`<div style="padding:6px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px">
+          <div style="width:${Math.max(pct,4)}px;height:8px;background:${color};border-radius:2px;min-width:4px"></div>
+          <span style="font-size:11px;color:var(--ink-2)">${fmt.split('/')[0]}</span>
+          <span style="font-family:var(--mono);font-size:10px;color:var(--ink-3);margin-left:auto">${count}</span>
+        </div>`;
       });
-      html+=`<div style="padding:8px 14px;background:var(--paper-2);font-size:11px;font-weight:600;color:var(--ink-3)">${total} piece${total!==1?'s':''}</div>`;
     }
     html+=`</div>`;
   });
@@ -1675,126 +2137,85 @@ function renderFormatValue(data){
   const colors=["#534AB7","#0F6E56","#BA7517","#888780"];
   const counts=[4,3,2,1].map(fl=>data.filter(d=>(d.format_lift||1)===fl).length);
   const max=Math.max(...counts,1);
-  document.getElementById('formatValueChart').innerHTML=[0,1,2,3].map(i=>`
-    <div class="value-row">
-      <div class="value-label">${labels[i]}</div>
-      <div class="value-bar-wrap"><div class="value-bar" style="width:${Math.round(counts[i]/max*100)}%;background:${colors[i]}"></div></div>
-      <div class="value-count">${counts[i]}</div>
-    </div>`).join('')||'<div style="font-size:12px;color:var(--ink-3);font-style:italic;padding:8px 0">No data</div>';
+  let html=counts.map((count,i)=>`<div class="value-row">
+    <div class="value-label">${labels[i]}</div>
+    <div class="value-bar-wrap"><div class="value-bar" style="width:${Math.round((count/max)*100)}%;background:${colors[i]}"></div></div>
+    <div class="value-count">${count}</div>
+  </div>`).join('');
+  document.getElementById('formatValueChart').innerHTML=html||'<div style="font-size:12px;color:var(--ink-3);font-style:italic;padding:8px 0">No data</div>';
 }
 
 function renderRepurposeCard(data){
-  const high=data.filter(d=>(d.repurposing||[]).length>=2||(d.format_lift||1)>=3);
-  const total=data.length;
-  if(!high.length){
-    document.getElementById('repurposeCard').innerHTML='<div style="font-size:12px;color:var(--ink-3);font-style:italic;padding:4px 0">Load calendar data to see repurposing opportunities.</div>';
-    return;
-  }
-  const rows=high.slice(0,6).map(p=>{
-    const deriv=(p.repurposing||[]).length||1;
-    return`<div style="margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--paper-3)">
-      <div style="font-size:12px;font-weight:500;color:var(--ink-2);margin-bottom:3px">${p.title}</div>
-      <div style="font-size:11px;color:var(--ink-3)">${deriv} derivative format${deriv!==1?'s':''} · FL ${p.format_lift||1}/4${p.repurposing_notes?` · ${p.repurposing_notes.substring(0,60)}…`:''}</div>
-    </div>`;
-  }).join('');
-  document.getElementById('repurposeCard').innerHTML=`
-    <div style="font-size:11px;color:var(--ink-3);margin-bottom:12px">${high.length} of ${total} pieces have repurposing potential</div>
-    ${rows}
-  `;
+  const withRepurpose=data.filter(d=>d.repurposing&&d.repurposing.length>0);
+  const totalDerivatives=data.reduce((s,d)=>s+(d.repurposing||[]).length,0);
+  const rooms={};
+  data.forEach(d=>{if(d.conv_match&&d.conv_match!=='—')rooms[d.conv_match]=(rooms[d.conv_match]||0)+1;});
+  const sorted=Object.entries(rooms).sort((a,b)=>b[1]-a[1]);
+  const max=Math.max(...sorted.map(r=>r[1]),1);
+  let html=`<div style="margin-bottom:10px;font-size:12px;color:var(--ink-2)">${withRepurpose.length} pieces have repurposing potential — ${totalDerivatives} total derivative pieces possible.</div>`;
+  html+=sorted.slice(0,8).map(([room,count])=>`<div class="value-row">
+    <div class="value-label" style="font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${room}</div>
+    <div class="value-bar-wrap"><div class="value-bar" style="width:${Math.round((count/max)*100)}%;background:var(--coral)"></div></div>
+    <div class="value-count">${count}</div>
+  </div>`).join('');
+  document.getElementById('repurposeCard').innerHTML=html||'<div style="font-size:12px;color:var(--ink-3);font-style:italic">No data</div>';
 }
 
 function renderPieceLog(data){
   document.getElementById('pieceCount').textContent=`${data.length} piece${data.length!==1?'s':''}`;
-  const rows=data.map((p,i)=>{
-    const lc=LENS_COLORS[p.lens]||{bg:"#F1EFE8",text:"#444"};
-    const sc=STATUS_COLORS[p.status]||{bg:"#E8E5DE",text:"#5F5E5A"};
-    const flColor=FL_COLORS[p.format_lift||1];
+  const STATUS_COLORS_LOCAL=STATUS_COLORS;
+  document.getElementById('pieceLog').innerHTML=data.map((d,i)=>{
+    const lc=LENS_COLORS[d.lens]||{bg:'#F2F0EB',text:'#7A7870'};
+    const sc=STATUS_COLORS_LOCAL[d.status]||{bg:'#F2F0EB',text:'#7A7870'};
+    const flColor=FL_COLORS[d.format_lift||1];
     return`<div class="piece-row">
-      <div class="pc" style="color:var(--ink-3);font-family:var(--mono);font-size:10px">${i+1}</div>
-      <div class="pc" style="font-weight:500;color:var(--ink);font-size:12px">${p.title}</div>
-      <div class="pc" style="color:var(--ink-3);font-size:11px">${(p.conv_match||'—').substring(0,40)}</div>
-      <div class="pc"><span class="tag" style="background:${lc.bg};color:${lc.text};font-size:10px">${(p.lens||'').split('/')[0].trim()}</span></div>
-      <div class="pc" style="color:var(--ink-2);font-size:11px">${p.format||'—'}</div>
-      <div class="pc" style="font-family:var(--mono);font-size:12px;color:${flColor}">${p.format_lift||'—'}</div>
-      <div class="pc"><span class="piece-status" style="background:${sc.bg};color:${sc.text}">${p.status||'—'}</span></div>
-      <div class="pc" style="font-size:11px;color:var(--ink-2)">${p.owner||'—'}</div>
+      <div class="pc" style="color:var(--ink-3);font-family:var(--mono);font-size:11px">${i+1}</div>
+      <div class="pc" style="font-size:12px;font-weight:500">${d.title||'Untitled'}</div>
+      <div class="pc" style="font-size:11px;color:var(--ink-3)">${(d.conv_match||'—').substring(0,40)}</div>
+      <div class="pc"><span class="tag" style="background:${lc.bg};color:${lc.text};font-size:10px">${(d.lens||'—').split('/')[0].trim()}</span></div>
+      <div class="pc" style="font-size:11px;color:var(--ink-3)">${(d.format||'—').split('/')[0]}</div>
+      <div class="pc" style="font-family:var(--mono);font-size:11px;color:${flColor};font-weight:600">${d.format_lift||'—'}</div>
+      <div class="pc"><span class="piece-status" style="background:${sc.bg};color:${sc.text}">${d.status||'—'}</span></div>
+      <div class="pc" style="font-size:11px;color:var(--ink-2)">${d.owner||'—'}</div>
+      <div class="pc"><button class="piece-delete-btn" onclick="deleteFromCalendar('${d.id}')" title="Remove piece">✕</button></div>
     </div>`;
-  }).join('');
-  document.getElementById('pieceLog').innerHTML=rows||'<div style="padding:20px;font-size:12px;color:var(--ink-3);font-style:italic">No pieces in this view.</div>';
+  }).join('')||'<div style="padding:16px;font-size:12px;color:var(--ink-3);font-style:italic">No pieces in this view.</div>';
 }
 
 // ══════════════════════════════════════
-// IMPORT
+// SAMPLE DATA
 // ══════════════════════════════════════
-function openImport(){document.getElementById('importModal').classList.add('open');}
-function closeImport(){document.getElementById('importModal').classList.remove('open');}
-function showImportSchema(){
-  const schema=`[{"title":"Sandy price-guess reel","lens":"Knowledge","conv_match":"What does buying or selling feel like right now?","format":"Reel/Short-form video","format_lift":4,"status":"Published","horizon":"published","owner":"Sandy","difficulty":3,"funnel_tier":"Top","audiences":["Brand awareness","Client attraction"]}]`;
-  const el=document.getElementById('importSchema');
-  el.textContent=schema;
-  el.style.display=el.style.display==='none'?'block':'none';
-}
-function processImport(){
-  const raw=document.getElementById('importText').value.trim();
-  if(!raw) return;
-  try{
-    const data=JSON.parse(raw);
-    if(!Array.isArray(data)) throw new Error('Expected an array');
-    data.forEach(item=>{
-      calendarData.push({
-        title:item.title||'Untitled',lens:item.lens||'Knowledge',
-        conv_match:item.conv_match||'—',format:item.format||'Unknown',
-        format_lift:parseInt(item.format_lift)||1,status:item.status||'Scored',
-        horizon:item.horizon||'active',score:parseInt(item.score)||0,
-        funnel_tier:item.funnel_tier||'',audiences:item.audiences||[],
-        owner:item.owner||'—',difficulty:parseInt(item.difficulty)||1,
-        repurposing:[],repurposing_notes:''
-      });
-    });
-    closeImport();
-    renderCalendar();
-    buildGenRoomGrid();
-  }catch(e){alert('Import failed: '+e.message);}
-}
-
 function loadCalSampleData(){
+  if(calendarData.length && !confirm('Replace existing calendar with sample data?')) return;
   calendarData=[
-    // ── PUBLISHED ──
-    {title:"Burlington market conditions — Q1 honest read",lens:"Knowledge",conv_match:"What does buying or selling feel like right now?",format:"Reel/Short-form video",format_lift:2,status:"Published",horizon:"published",score:70,funnel_tier:"Top",audiences:["Brand awareness","Client attraction"],owner:"Brandon",difficulty:1,repurposing:["Static post","Email/Newsletter"],repurposing_notes:"Pull 2 stat callout graphics (Emily, 30min each). Use B-roll still for email header."},
-    {title:"Sandy's price-guess: 3 Burlington homes",lens:"Knowledge",conv_match:"What actually makes my home sell for more or less?",format:"Reel/Short-form video",format_lift:4,status:"Published",horizon:"published",score:91,funnel_tier:"Top",audiences:["Brand awareness","Client attraction"],owner:"Sandy",difficulty:3,repurposing:["Static post","Carousel"],repurposing_notes:"Each reveal moment = 1 standalone static (Emily, 20min each). 3-slide carousel: guess → reveal → key pricing insight."},
-    {title:"What really happens between contract and close",lens:"Process / Credibility",conv_match:"Why does process matter in a real estate deal?",format:"Carousel",format_lift:2,status:"Published",horizon:"published",score:74,funnel_tier:"Mid",audiences:["Client attraction"],owner:"Emily",difficulty:1,repurposing:["Static post"],repurposing_notes:"Final slide pulls as standalone post (Emily, 15min)."},
-    {title:"Meet Nigel — behind the camera at B&Co",lens:"Relationships",conv_match:"Who is B&Co and why does this firm exist?",format:"Reel/Short-form video",format_lift:3,status:"Published",horizon:"published",score:82,funnel_tier:"Top",audiences:["Brand awareness","Recruitment"],owner:"Nigel",difficulty:2,repurposing:["Static post"],repurposing_notes:"Pull BTS still for recruiting content block."},
-    {title:"417 Maple Ave — listing walkthrough",lens:"Listing Exposure",conv_match:"What kinds of listings are selling — and which aren't?",format:"Long-form video",format_lift:2,status:"Published",horizon:"published",score:76,funnel_tier:"Mid",audiences:["Client attraction"],owner:"Nigel",difficulty:3,repurposing:["Reel/Short-form video","Static post"],repurposing_notes:"30-sec hero cut for Reel (Nigel, 45min). Pull exterior hero shot for just-listed static (Emily, 20min)."},
-    {title:"Monthly agent brief — April what's working",lens:"Agent Enablement",conv_match:"What does this month's data mean for your client conversations?",format:"Internal brief",format_lift:1,status:"Published",horizon:"published",score:78,funnel_tier:"Internal",audiences:["Agent enablement"],owner:"Brandon",difficulty:1,repurposing:["Email/Newsletter"],repurposing_notes:"Top 3 tactics → agent email (Emily, 20min)."},
-    {title:"Can AI actually replace your real estate agent?",lens:"Process / Credibility",conv_match:"Can Zillow or AI actually do what an agent does?",format:"Reel/Short-form video",format_lift:3,status:"Published",horizon:"published",score:85,funnel_tier:"Top",audiences:["Brand awareness","Client attraction"],owner:"Brandon",difficulty:2,repurposing:["Carousel","Static post"],repurposing_notes:"5 things AI can't do = carousel (Emily, 1hr). Pull strongest point as static (Emily, 20min)."},
-    {title:"What Burlington's growth actually means for your home value",lens:"Knowledge",conv_match:"What does Burlington's growth mean for property values?",format:"Static post",format_lift:2,status:"Published",horizon:"published",score:68,funnel_tier:"Mid",audiences:["Client attraction","Brand awareness"],owner:"Emily",difficulty:1,repurposing:["Carousel"],repurposing_notes:"Expand data points to 4-slide carousel (Emily, 45min)."},
-    {title:"B&Co coffee & connections recap",lens:"Relationships",conv_match:"What is it actually like to work at B&Co day to day?",format:"Static post",format_lift:2,status:"Published",horizon:"published",score:72,funnel_tier:"Top",audiences:["Brand awareness","Recruitment"],owner:"Emily",difficulty:1,repurposing:[],repurposing_notes:"Standalone — no derivatives planned."},
-    {title:"Fixture vs. personal property — the sex swing edition",lens:"Process / Credibility",conv_match:"Why does process matter in a real estate deal?",format:"Reel/Short-form video",format_lift:3,status:"Published",horizon:"published",score:83,funnel_tier:"Mid",audiences:["Brand awareness","Client attraction"],owner:"Nigel",difficulty:2,repurposing:["Static post"],repurposing_notes:"Pull the reveal moment as a static with text overlay (Emily, 20min)."},
-
-    // ── ACTIVE THIS MONTH ──
-    {title:"The real cost of overpricing — what sellers don't see",lens:"Knowledge",conv_match:"What actually makes my home sell for more or less?",format:"Carousel",format_lift:2,status:"In Production",horizon:"active",score:74,funnel_tier:"Mid",audiences:["Client attraction"],owner:"Emily",difficulty:1,repurposing:["Static post","Email/Newsletter"],repurposing_notes:"Pull slide 3 (the data slide) as standalone (15min). Email: 3-line summary with link (20min)."},
-    {title:"Sandy debates: buyer vs. seller — same person",lens:"Relationships",conv_match:"What does buying or selling feel like right now?",format:"Reel/Short-form video",format_lift:4,status:"In Production",horizon:"active",score:89,funnel_tier:"Top",audiences:["Brand awareness","Client attraction"],owner:"Sandy",difficulty:3,repurposing:["Static post","Carousel"],repurposing_notes:"Each character side = 1 quote graphic (Emily, 20min each). 4-slide carousel: the core tension points."},
-    {title:"What a great agent actually does — day in the life",lens:"Process / Credibility",conv_match:"What does a real estate agent actually do?",format:"Reel/Short-form video",format_lift:3,status:"Approved",horizon:"active",score:82,funnel_tier:"Top",audiences:["Brand awareness","Client attraction","Recruitment"],owner:"Claire",difficulty:3,repurposing:["Carousel","Static post"],repurposing_notes:"Timeline moments = carousel (Emily, 1hr). Pull the 'client cried' moment as standalone (20min)."},
-    {title:"Is your agent BS-ing you? 5 real tells",lens:"Process / Credibility",conv_match:"How do I know if my agent is actually doing their job?",format:"Carousel",format_lift:3,status:"Approved",horizon:"active",score:86,funnel_tier:"Top",audiences:["Brand awareness","Client attraction"],owner:"Emily",difficulty:1,repurposing:["Reel/Short-form video","Static post"],repurposing_notes:"Record Brandon delivering tell #1 as a Reel hook (Nigel, 30min). Pull most viral slide as static."},
-    {title:"229 Oak Street — just listed",lens:"Listing Exposure",conv_match:"What kinds of listings are selling — and which aren't?",format:"Reel/Short-form video",format_lift:2,status:"In Production",horizon:"active",score:72,funnel_tier:"Mid",audiences:["Client attraction"],owner:"Nigel",difficulty:2,repurposing:["Static post"],repurposing_notes:"Hero exterior still for grid post (Emily, 15min)."},
-    {title:"How do I know when I'm actually ready to buy?",lens:"Knowledge",conv_match:"How do I maximize my experience as a first-timer?",format:"Carousel",format_lift:2,status:"Scored",horizon:"active",score:71,funnel_tier:"Top",audiences:["Brand awareness","Client attraction"],owner:"Emily",difficulty:1,repurposing:["Static post"],repurposing_notes:"Pull the 3-question readiness checklist as a standalone (Emily, 20min)."},
-
-    // ── PLANNED NEXT 60 DAYS ──
-    {title:"Why we have a real office in a remote-first world",lens:"Relationships",conv_match:"What is it actually like to work at B&Co day to day?",format:"Reel/Short-form video",format_lift:3,status:"Planned",horizon:"planned",score:84,funnel_tier:"Top",audiences:["Brand awareness","Recruitment"],owner:"Nigel",difficulty:2,repurposing:["Static post"],repurposing_notes:"Pull team moment still for recruiting block (Emily, 15min)."},
-    {title:"Sandy asks strangers: what does an agent actually do?",lens:"Process / Credibility",conv_match:"What does a real estate agent actually do?",format:"Reel/Short-form video",format_lift:4,status:"Planned",horizon:"planned",score:90,funnel_tier:"Top",audiences:["Brand awareness","Client attraction"],owner:"Sandy",difficulty:3,repurposing:["Carousel","Static post"],repurposing_notes:"Best answers = carousel (Emily, 1hr). Funniest wrong answer = standalone (20min)."},
-    {title:"What it actually costs to sell your home in NC",lens:"Process / Credibility",conv_match:"What does it actually cost to buy or sell? No fluff.",format:"Carousel",format_lift:2,status:"Planned",horizon:"planned",score:77,funnel_tier:"Mid",audiences:["Client attraction"],owner:"Emily",difficulty:1,repurposing:["Static post","Email/Newsletter"],repurposing_notes:"Line-item breakdown slide as static (15min). Email: the headline number with context (20min)."},
-    {title:"Local spotlight — best trails within 15 min of Burlington",lens:"Relationships",conv_match:"What is it actually like to live in Burlington?",format:"Reel/Short-form video",format_lift:3,status:"Planned",horizon:"planned",score:79,funnel_tier:"Top",audiences:["Brand awareness"],owner:"Nigel",difficulty:3,repurposing:["Carousel","Static post"],repurposing_notes:"Each trail = 1 slide carousel (Emily, 1hr). Pull hero shot of best trail as static (20min)."},
-    {title:"B&Co listing process — what we do that others skip",lens:"Process / Credibility",conv_match:"What does our listing presentation and onboarding look like?",format:"Long-form video",format_lift:2,status:"Planned",horizon:"planned",score:80,funnel_tier:"Mid",audiences:["Client attraction","Recruitment"],owner:"Nigel",difficulty:3,repurposing:["Carousel","Reel/Short-form video"],repurposing_notes:"Each process step = carousel slide (Emily, 1hr). Pull the 'standard everyone skips' moment as Reel (Nigel, 30min)."},
-    {title:"What makes a B&Co agent different — recruiting piece",lens:"Agent Enablement",conv_match:"What does the best version of a B&Co agent look like?",format:"Reel/Short-form video",format_lift:3,status:"Planned",horizon:"planned",score:81,funnel_tier:"Top",audiences:["Recruitment"],owner:"Brandon",difficulty:2,repurposing:["Static post"],repurposing_notes:"Pull the core values moment as a static graphic (Emily, 20min)."},
-    {title:"I backed out of a deal — here's what happened",lens:"Process / Credibility",conv_match:"What happens if I back out of a deal?",format:"Reel/Short-form video",format_lift:3,status:"Planned",horizon:"planned",score:84,funnel_tier:"Mid",audiences:["Client attraction"],owner:"Claire",difficulty:2,repurposing:["Carousel"],repurposing_notes:"The 4 outcomes of backing out = carousel (Emily, 45min)."},
-    {title:"I sold my home and had nowhere to go — what we did",lens:"Relationships",conv_match:"I sold my home and have nowhere to go — now what?",format:"Reel/Short-form video",format_lift:4,status:"Planned",horizon:"planned",score:87,funnel_tier:"Mid",audiences:["Client attraction","Brand awareness"],owner:"Sandy",difficulty:3,repurposing:["Static post","Carousel"],repurposing_notes:"The 3 options breakdown = carousel (Emily, 45min). The client relief moment = standalone (20min)."},
-    {title:"What actually makes your home sell for more",lens:"Knowledge",conv_match:"What actually makes my home sell for more or less?",format:"Carousel",format_lift:2,status:"Planned",horizon:"planned",score:73,funnel_tier:"Mid",audiences:["Client attraction"],owner:"Emily",difficulty:1,repurposing:["Static post"],repurposing_notes:"The #1 factor = standalone static (15min)."},
-    {title:"May agent skill brief — winning the pricing conversation",lens:"Agent Enablement",conv_match:"How do I sell my listings faster and at better prices?",format:"Internal brief",format_lift:1,status:"Planned",horizon:"planned",score:80,funnel_tier:"Internal",audiences:["Agent enablement"],owner:"Brandon",difficulty:1,repurposing:["Email/Newsletter"],repurposing_notes:"3 key talking points → agent email (Emily, 20min)."},
-    {title:"Neighborhoods to watch in Alamance County right now",lens:"Knowledge",conv_match:"What neighborhoods should I be paying attention to right now?",format:"Carousel",format_lift:2,status:"Planned",horizon:"planned",score:75,funnel_tier:"Mid",audiences:["Client attraction","Brand awareness"],owner:"Emily",difficulty:1,repurposing:["Static post"],repurposing_notes:"Top neighborhood pull as standalone (20min)."},
+    {id:1,title:"Burlington market conditions — Q1 honest read",lens:"Knowledge",conv_match:"What does buying or selling feel like right now?",format:"Reel/Short-form video",format_lift:2,status:"Published",horizon:"published",score:70,funnel_tier:"Top",audiences:["Brand awareness","Client attraction"],owner:"Brandon",difficulty:1,repurposing:["Static post","Email/Newsletter"],repurposing_notes:"Pull 2 stat callout graphics (Emily, 30min each)."},
+    {id:2,title:"Sandy's price-guess: 3 Burlington homes",lens:"Knowledge",conv_match:"What actually makes my home sell for more or less?",format:"Reel/Short-form video",format_lift:4,status:"Published",horizon:"published",score:91,funnel_tier:"Top",audiences:["Brand awareness","Client attraction"],owner:"Sandy",difficulty:3,repurposing:["Static post","Carousel"],repurposing_notes:"Each reveal moment = 1 standalone static (Emily, 20min each)."},
+    {id:3,title:"What really happens between contract and close",lens:"Process / Credibility",conv_match:"Why does process matter in a real estate deal?",format:"Carousel",format_lift:2,status:"Published",horizon:"published",score:74,funnel_tier:"Mid",audiences:["Client attraction"],owner:"Emily",difficulty:1,repurposing:["Static post"],repurposing_notes:"Final slide pulls as standalone post (Emily, 15min)."},
+    {id:4,title:"Meet Nigel — behind the camera at B&Co",lens:"Relationships",conv_match:"Who is B&Co and why does this firm exist?",format:"Reel/Short-form video",format_lift:3,status:"Published",horizon:"published",score:82,funnel_tier:"Top",audiences:["Brand awareness","Recruitment"],owner:"Nigel",difficulty:2,repurposing:["Static post"],repurposing_notes:"Pull BTS still for recruiting content block."},
+    {id:5,title:"417 Maple Ave — listing walkthrough",lens:"Listing Exposure",conv_match:"What kinds of listings are selling — and which aren't?",format:"Long-form video",format_lift:2,status:"Published",horizon:"published",score:76,funnel_tier:"Mid",audiences:["Client attraction"],owner:"Nigel",difficulty:3,repurposing:["Reel/Short-form video","Static post"],repurposing_notes:"30-sec hero cut for Reel (Nigel, 45min)."},
+    {id:6,title:"Can AI actually replace your real estate agent?",lens:"Process / Credibility",conv_match:"Can Zillow or AI actually do what an agent does?",format:"Reel/Short-form video",format_lift:3,status:"Published",horizon:"published",score:85,funnel_tier:"Top",audiences:["Brand awareness","Client attraction"],owner:"Brandon",difficulty:2,repurposing:["Carousel","Static post"],repurposing_notes:"5 things AI can't do = carousel (Emily, 1hr)."},
+    {id:7,title:"The real cost of overpricing — what sellers don't see",lens:"Knowledge",conv_match:"What actually makes my home sell for more or less?",format:"Carousel",format_lift:2,status:"In Production",horizon:"active",score:74,funnel_tier:"Mid",audiences:["Client attraction"],owner:"Emily",difficulty:1,repurposing:["Static post","Email/Newsletter"],repurposing_notes:"Pull the data slide as standalone (15min)."},
+    {id:8,title:"Sandy debates: buyer vs. seller — same person",lens:"Relationships",conv_match:"What does buying or selling feel like right now?",format:"Reel/Short-form video",format_lift:4,status:"In Production",horizon:"active",score:89,funnel_tier:"Top",audiences:["Brand awareness","Client attraction"],owner:"Sandy",difficulty:3,repurposing:["Static post","Carousel"],repurposing_notes:"Each character side = 1 quote graphic (Emily, 20min each)."},
+    {id:9,title:"What a great agent actually does — day in the life",lens:"Process / Credibility",conv_match:"What does a real estate agent actually do?",format:"Reel/Short-form video",format_lift:3,status:"Approved",horizon:"active",score:82,funnel_tier:"Top",audiences:["Brand awareness","Client attraction","Recruitment"],owner:"Claire",difficulty:3,repurposing:["Carousel","Static post"],repurposing_notes:"Timeline moments = carousel (Emily, 1hr)."},
+    {id:10,title:"Is your agent BS-ing you? 5 real tells",lens:"Process / Credibility",conv_match:"How do I know if my agent is actually doing their job?",format:"Carousel",format_lift:3,status:"Approved",horizon:"active",score:86,funnel_tier:"Top",audiences:["Brand awareness","Client attraction"],owner:"Emily",difficulty:1,repurposing:["Reel/Short-form video","Static post"],repurposing_notes:"Record Brandon delivering tell #1 as Reel hook (Nigel, 30min)."},
+    {id:11,title:"Why we have a real office in a remote-first world",lens:"Relationships",conv_match:"What is it actually like to work at B&Co day to day?",format:"Reel/Short-form video",format_lift:3,status:"Planned",horizon:"planned",score:84,funnel_tier:"Top",audiences:["Brand awareness","Recruitment"],owner:"Nigel",difficulty:2,repurposing:["Static post"],repurposing_notes:"Pull team moment still for recruiting block (Emily, 15min)."},
+    {id:12,title:"Sandy asks strangers: what does an agent actually do?",lens:"Process / Credibility",conv_match:"What does a real estate agent actually do?",format:"Reel/Short-form video",format_lift:4,status:"Planned",horizon:"planned",score:90,funnel_tier:"Top",audiences:["Brand awareness","Client attraction"],owner:"Sandy",difficulty:3,repurposing:["Carousel","Static post"],repurposing_notes:"Best answers = carousel (Emily, 1hr)."},
+    {id:13,title:"What it actually costs to sell your home in NC",lens:"Process / Credibility",conv_match:"What does it actually cost to buy or sell? No fluff.",format:"Carousel",format_lift:2,status:"Planned",horizon:"planned",score:77,funnel_tier:"Mid",audiences:["Client attraction"],owner:"Emily",difficulty:1,repurposing:["Static post","Email/Newsletter"],repurposing_notes:"Line-item breakdown slide as static (15min)."},
+    {id:14,title:"Local spotlight — best trails within 15 min of Burlington",lens:"Relationships",conv_match:"What is it actually like to live in Burlington?",format:"Reel/Short-form video",format_lift:3,status:"Planned",horizon:"planned",score:79,funnel_tier:"Top",audiences:["Brand awareness"],owner:"Nigel",difficulty:3,repurposing:["Carousel","Static post"],repurposing_notes:"Each trail = 1 slide carousel (Emily, 1hr)."},
+    {id:15,title:"I sold my home and had nowhere to go — what we did",lens:"Relationships",conv_match:"I sold my home and have nowhere to go — now what?",format:"Reel/Short-form video",format_lift:4,status:"Planned",horizon:"planned",score:87,funnel_tier:"Mid",audiences:["Client attraction","Brand awareness"],owner:"Sandy",difficulty:3,repurposing:["Static post","Carousel"],repurposing_notes:"The 3 options breakdown = carousel (Emily, 45min)."},
   ];
+  saveCalendarToStorage();
   renderCalendar();
   buildGenRoomGrid();
+  updateBadges();
 }
+
+// ══════════════════════════════════════
+// INIT
+// ══════════════════════════════════════
+renderWorkshop();
+renderCalendar();
+updateBadges();
 </script>
 </body>
 </html>
